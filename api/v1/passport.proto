@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/api/v1;apiv1";
+option java_multiple_files = true;
+option java_outer_classname = "OperationProto";
+option java_package = "orzark.common.blob.v1";
+
+service PassportService {
+  rpc LoginUrl(LoginUrlRequest) returns (LoginUrlResponse) {
+    option (google.api.http) = {
+      get : "/v1/passport/login:url"
+    };
+  }
+
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post : "/v1/passport/login"
+      body : "*"
+    };
+  }
+
+  rpc LoginCallback(LoginCallbackRequest) returns (LoginCallbackResponse) {
+    option (google.api.http) = {
+      post : "/v1/passport/login:callback"
+      body : "*"
+      additional_bindings : {get : "/v1/passport/login:callback"}
+    };
+  }
+
+  rpc Profile(ProfileRequest) returns (ProfileResponse) {
+    option (google.api.http) = {
+      get : "/v1/passport/profile"
+    };
+  }
+
+  rpc Logout(LogoutRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/v1/passport/logout"
+      body : "*"
+    };
+  }
+}
+
+message PassportInfo { string name = 1; }
+
+message LoginUrlRequest {}
+
+message LoginUrlResponse { string url = 1; }
+
+message LoginRequest {
+  string name = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  PassportInfo info = 1;
+  string token = 2;
+}
+
+message LoginCallbackRequest {
+  string code = 1;
+  string state = 2;
+}
+
+message LoginCallbackResponse {
+  PassportInfo info = 1;
+  string token = 2;
+}
+
+message ProfileRequest {}
+
+message ProfileResponse { PassportInfo info = 1; }
+
+message LogoutRequest { string token = 1; }
