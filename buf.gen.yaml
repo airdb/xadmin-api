@@ -13,36 +13,37 @@ managed:
 plugins:
   # Golang
   - name: go
-    out: ./genproto
+    out: genproto
     opt:
       - paths=source_relative
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
   - name: go-aip
-    out: ./genproto
+    out: genproto
     opt:
       - paths=source_relative
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
   - name: validate
-    out: ./genproto
+    out: genproto
     opt:
       - lang=go
       - paths=source_relative
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
   - name: go-grpc
-    out: ./genproto
+    out: genproto
     opt:
       - paths=source_relative
       - require_unimplemented_servers=false
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
   - name: grpc-gateway
-    out: ./genproto
+    out: genproto
     opt:
       - paths=source_relative
       - allow_repeated_fields_in_body=true
       - generate_unbound_methods=true
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
   - name: openapiv2
-    out: ./genproto
+    out: genproto
     opt:
       - allow_repeated_fields_in_body=true
+      - use_go_templates=true
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1

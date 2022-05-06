@@ -8,11 +8,12 @@ export JAEGER_AGENT_PORT = 6831
 export JAEGER_SAMPLER_TYPE = const
 export JAEGER_SAMPLER_PARAM = 1
 
-run:
-	@go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go config config/config.yml
+run: gen-api
+	@go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go \
+		config config/config.yml
 
 gen-api:
-	buf generate
+	@buf generate
 
 test:
 	@echo "Testing ..."

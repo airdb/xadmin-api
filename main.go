@@ -36,9 +36,9 @@ func createApplication(configFilePath string, additionalFiles []string) *fx.App 
 		mortar.HttpServerFxOptions(),
 		mortar.InternalHttpHandlersFxOptions(),
 		// Tutorial service dependencies
-		mortar.PassportServiceAPIsAndOtherDependenciesFxOption(), // register tutorial APIs
+		mortar.ServicesAPIsAndOtherDependenciesFxOption(), // register tutorial APIs
 		// This one invokes all the above
-		mortar.BuildCasdoorFxInvoke(),
+		mortar.BuildAuthFxInvoke(),
 		providers.BuildMortarWebServiceFxOption(), // http server invoker
 	)
 }

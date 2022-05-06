@@ -7,7 +7,8 @@ import (
 	"github.com/airdb/xadmin-api/app/data"
 	"github.com/airdb/xadmin-api/app/services"
 	"github.com/airdb/xadmin-api/app/validations"
-	apiv1 "github.com/airdb/xadmin-api/genproto/v1"
+	bchmv1 "github.com/airdb/xadmin-api/genproto/bchm/v1"
+	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
 	serverInt "github.com/go-masonry/mortar/interfaces/http/server"
 	"github.com/go-masonry/mortar/providers/groups"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -15,52 +16,66 @@ import (
 	"google.golang.org/grpc"
 )
 
-type passportServiceDeps struct {
+type servicesDeps struct {
 	fx.In
 
 	// API Implementations
-	Passport apiv1.PassportServiceServer
+	Passport passportv1.PassportServiceServer
+	Bchm     bchmv1.BchmServiceServer
 }
 
-func PassportServiceAPIsAndOtherDependenciesFxOption() fx.Option {
+func ServicesAPIsAndOtherDependenciesFxOption() fx.Option {
 	return fx.Options(
 		// GRPC Service APIs registration
 		fx.Provide(fx.Annotated{
 			Group:  groups.GRPCServerAPIs,
-			Target: passportGRPCServiceAPIs,
+			Target: grpcServiceAPIs,
 		}),
 		// GRPC Gateway Generated Handlers registration
 		fx.Provide(fx.Annotated{
 			Group:  groups.GRPCGatewayGeneratedHandlers + ",flatten", // "flatten" does this [][]serverInt.GRPCGatewayGeneratedHandlers -> []serverInt.GRPCGatewayGeneratedHandlers
-			Target: passportGRPCGatewayHandlers,
+			Target: grpcGatewayHandlers,
 		}),
+		// Migrate
+		data.MigratorFxOption(),
 		// All other tutorial dependencies
-		passportDependencies(),
+		servicesDependencies(),
 	)
 }
 
-func passportGRPCServiceAPIs(deps passportServiceDeps) serverInt.GRPCServerAPI {
+func grpcServiceAPIs(deps servicesDeps) serverInt.GRPCServerAPI {
 	return func(srv *grpc.Server) {
-		apiv1.RegisterPassportServiceServer(srv, deps.Passport)
+		passportv1.RegisterPassportServiceServer(srv, deps.Passport)
+		bchmv1.RegisterBchmServiceServer(srv, deps.Bchm)
 		// Any additional gRPC Implementations should be called here
 	}
 }
 
-func passportGRPCGatewayHandlers() []serverInt.GRPCGatewayGeneratedHandlers {
+func grpcGatewayHandlers() []serverInt.GRPCGatewayGeneratedHandlers {
 	return []serverInt.GRPCGatewayGeneratedHandlers{
 		// Register passport REST API
 		func(mux *runtime.ServeMux, endpoint string) error {
-			return apiv1.RegisterPassportServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
+			return passportv1.RegisterPassportServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
+		},
+		// Register Bchm REST API
+		func(mux *runtime.ServeMux, endpoint string) error {
+			return bchmv1.RegisterBchmServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
 		},
 		// Any additional gRPC gateway registrations should be called here
 	}
 }
 
-func passportDependencies() fx.Option {
+func servicesDependencies() fx.Option {
 	return fx.Provide(
+		// Passport dependents
 		services.CreatePassportServiceService,
 		controllers.CreatePassportServiceController,
-		data.CreatePassportInfoDB,
+		data.NewPassportRepo,
 		validations.CreatePassportServiceValidations,
+		// Bchm dependents
+		services.CreateBchmServiceService,
+		controllers.CreateBchmServiceController,
+		data.NewLostRepo,
+		validations.CreateBchmServiceValidations,
 	)
 }

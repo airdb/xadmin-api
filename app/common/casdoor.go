@@ -9,17 +9,17 @@ import (
 type casdoorContext int
 
 const (
-	casdoorClaimsCtx casdoorContext = 1
+	casdoorUserCtx casdoorContext = 1
 )
 
-func NewCasdoorContext(ctx context.Context, claims *auth.Claims) context.Context {
-	return context.WithValue(ctx, casdoorClaimsCtx, claims)
+func NewCasdoorContext(ctx context.Context, user *auth.User) context.Context {
+	return context.WithValue(ctx, casdoorUserCtx, user)
 }
 
-func FromCurrentCasdoorContext(ctx context.Context) *auth.Claims {
-	claims, ok := ctx.Value(casdoorClaimsCtx).(*auth.Claims)
+func FromCurrentCasdoorContext(ctx context.Context) *auth.User {
+	user, ok := ctx.Value(casdoorUserCtx).(*auth.User)
 	if !ok {
 		return nil
 	}
-	return claims
+	return user
 }

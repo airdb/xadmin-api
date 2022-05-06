@@ -3,14 +3,14 @@ package validations
 import (
 	"context"
 
-	apiv1 "github.com/airdb/xadmin-api/genproto/v1"
+	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
 )
 
 type PassportServiceValidations interface {
-	Login(ctx context.Context, request *apiv1.LoginRequest) error
-	LoginCallback(ctx context.Context, request *apiv1.LoginCallbackRequest) error
-	Profile(ctx context.Context, request *apiv1.ProfileRequest) error
-	Logout(ctx context.Context, request *apiv1.LogoutRequest) error
+	Login(ctx context.Context, request *passportv1.LoginRequest) error
+	Callback(ctx context.Context, request *passportv1.CallbackRequest) error
+	Profile(ctx context.Context, request *passportv1.ProfileRequest) error
+	Logout(ctx context.Context, request *passportv1.LogoutRequest) error
 }
 
 type passportServiceValidations struct {
@@ -20,18 +20,18 @@ func CreatePassportServiceValidations() PassportServiceValidations {
 	return new(passportServiceValidations)
 }
 
-func (w *passportServiceValidations) Login(ctx context.Context, request *apiv1.LoginRequest) error {
+func (w *passportServiceValidations) Login(ctx context.Context, request *passportv1.LoginRequest) error {
 	return nil
 }
 
-func (w *passportServiceValidations) LoginCallback(ctx context.Context, request *apiv1.LoginCallbackRequest) error {
+func (w *passportServiceValidations) Callback(ctx context.Context, request *passportv1.CallbackRequest) error {
 	return nil
 }
 
-func (w *passportServiceValidations) Profile(ctx context.Context, request *apiv1.ProfileRequest) error {
+func (w *passportServiceValidations) Profile(ctx context.Context, request *passportv1.ProfileRequest) error {
 	return nil
 }
 
-func (w *passportServiceValidations) Logout(ctx context.Context, request *apiv1.LogoutRequest) error {
+func (w *passportServiceValidations) Logout(ctx context.Context, request *passportv1.LogoutRequest) error {
 	return nil
 }

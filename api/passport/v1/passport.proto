@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package api.passport.v1;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/api/passport/v1;passportv1";
+option java_multiple_files = true;
+option java_outer_classname = "PassportProto";
+option java_package = "com.github.airdb.xadmin-api.passport.v1";
+
+service PassportService {
+  // Login 账号密码登录
+  // authz: passport.login,*,get
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post : "/v1/passport/login"
+      body : "*"
+    };
+  }
+
+  // Preset 获取SSO登录链接.
+  // authz: passport.preset,*,get
+  rpc Preset(PresetRequest) returns (PresetResponse) {
+    option (google.api.http) = {
+      get : "/v1/passport/preset"
+    };
+  }
+
+  // Callback SSO登录回调
+  // authz: passport.callback,*,get
+  rpc Callback(CallbackRequest) returns (CallbackResponse) {
+    option (google.api.http) = {
+      post : "/v1/passport/callback"
+      body : "*"
+      additional_bindings : {get : "/v1/passport/callback"}
+    };
+  }
+
+  // Profile 当前登录用户信息
+  // authz: passport.profile,*,get
+  rpc Profile(ProfileRequest) returns (ProfileResponse) {
+    option (google.api.http) = {
+      get : "/v1/passport/profile"
+    };
+  }
+
+  // Logout 登出
+  // authz: passport.logout,*,get
+  rpc Logout(LogoutRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/v1/passport/logout"
+      body : "*"
+    };
+  }
+}
+
+// Info 用户信息
+message Info {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  string display_name = 4;
+  string avatar = 5;
+  string email = 6;
+  string phone = 7;
+}
+
+message PresetRequest {}
+
+message PresetResponse { string url = 1; }
+
+message LoginRequest {
+  // name 用户名
+  string name = 1;
+  // password 密码
+  string password = 2;
+}
+
+message LoginResponse {
+  Info info = 1;
+  // token 授权密钥
+  string token = 2;
+}
+
+message CallbackRequest {
+  string code = 1;
+  string state = 2;
+}
+
+message CallbackResponse {
+  Info info = 1;
+  // token 授权密钥
+  string token = 2;
+}
+
+message ProfileRequest {}
+
+message ProfileResponse { Info info = 1; }
+
+message LogoutRequest {
+  // token 授权密钥
+  string token = 1;
+}

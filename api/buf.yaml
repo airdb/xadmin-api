@@ -1,6 +1,6 @@
 version: v1
 
-name: buf.build/xqbumu/orzark
+name: buf.build/airdb/xadmin-api
 
 deps:
   - buf.build/googleapis/googleapis

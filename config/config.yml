@@ -107,3 +107,12 @@ xadmin:
     jwtPublicKey: "key"
     organizationName: "organization"
     applicationName: "application"
+
+services:
+  # 模块名称: bchm, passport
+  bchm:
+    database:
+      # 数据库类型: sqlite, mysql
+      type: mysql
+      # 数据源名称
+      dsn: user:password@tcp(localhost:3306)/dbname??charset=utf8mb4&parseTime=True&loc=Local"

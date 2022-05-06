@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+package api.bchm.v1;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/api/bchm/v1;bchmv1";
+option java_multiple_files = true;
+option java_outer_classname = "BchmProto";
+option java_package = "com.github.airdb.xadmin-api.bchm.v1";
+
+// 宝贝回家 业务
+service BchmService {
+  // ListLosts 走失信息 列表.
+  //
+  // authz: bchm.lost,*,list
+  rpc ListLosts(ListLostsRequest) returns (ListLostsResponse) {
+    option (google.api.http) = {
+      get : "/v1/bchm/losts"
+    };
+  }
+
+  // GetLost 走失信息 详情.
+  //
+  // authz: bchm.preset,id,get
+  rpc GetLost(GetLostRequest) returns (GetLostResponse) {
+    option (google.api.http) = {
+      get : "/v1/bchm/lost/{id}"
+    };
+  }
+
+  // CreateLost 走失信息 创建.
+  //
+  // authz: bchm.lost,*,create
+  rpc CreateLost(CreateLostRequest) returns (CreateLostResponse) {
+    option (google.api.http) = {
+      post : "/v1/bchm/lost"
+      body : "*"
+    };
+  }
+
+  // UpdateLost 当前登录用户信息
+  //
+  // authz: bchm.lost,id,update
+  rpc UpdateLost(UpdateLostRequest) returns (UpdateLostResponse) {
+    option (google.api.http) = {
+      put : "/v1/bchm/lost/{lost.id}"
+      body: "*"
+    };
+  }
+
+  // DeleteLost 登出
+  //
+  // authz: bchm.lost,id,get
+  rpc DeleteLost(DeleteLostRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete : "/v1/bchm/lost/{id}"
+    };
+  }
+}
+
+// Lost 走失信息
+message Lost {
+  int32 id = 1;
+
+  // 基础信息
+	string name = 2; // 姓名
+	uint32 gender = 3; // 性别: 1男 2女 0未知
+	google.protobuf.Timestamp birthed_at = 4; // 出生日期
+	repeated string carousel = 5; // 寻亲目标轮播图
+
+	// 失踪信息
+	google.protobuf.Timestamp missed_at = 6; // 失踪时间
+	string missed_country = 7; // 失踪国家
+	string missed_province = 8; // 失踪省
+	string missed_city = 9; // 失踪市
+	string missed_addr = 10; // 详细地址
+	string missed_height = 11; // 失踪时身高
+	string character = 12; // 特征
+	string details = 13; // 失踪详情
+
+	// 寻亲信息
+	string category = 14; // 寻亲类型
+	string data_from = 15; // 信息来源
+	string follower = 16; // 跟进志愿者
+}
+
+message ListLostsRequest {
+  int32 page_offset =1;
+  int32 page_size = 2;
+}
+
+message ListLostsResponse {
+  repeated Lost losts = 1;
+}
+
+message GetLostRequest {
+  int32 id = 1;
+}
+
+message GetLostResponse { Lost lost = 1; }
+
+message CreateLostRequest {
+  // 基础信息
+	string name = 2; // 姓名
+	uint32 gender = 3; // 性别: 1男 2女 0未知
+	google.protobuf.Timestamp birthed_at = 4; // 出生日期
+	repeated string carousel = 5; // 寻亲目标轮播图
+
+	// 失踪信息
+	google.protobuf.Timestamp missed_at = 6; // 失踪时间
+	string missed_country = 7; // 失踪国家
+	string missed_province = 8; // 失踪省
+	string missed_city = 9; // 失踪市
+	string missed_addr = 10; // 详细地址
+	string missed_height = 11; // 失踪时身高
+	string character = 12; // 特征
+	string details = 13; // 失踪详情
+
+	// 寻亲信息
+	string category = 14; // 寻亲类型
+	string data_from = 15; // 信息来源
+	string follower = 16; // 跟进志愿者
+}
+
+message CreateLostResponse { Lost lost = 1; }
+
+message UpdateLostRequest {
+  Lost lost = 1;
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+message UpdateLostResponse { Lost lost = 1; }
+
+message DeleteLostRequest { int32 id = 1; }
