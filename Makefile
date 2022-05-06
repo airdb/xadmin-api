@@ -15,6 +15,14 @@ run: gen-api
 gen-api:
 	@buf generate
 
+deps:
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.0
+	go install go.einride.tech/aip/cmd/protoc-gen-go-aip@v0.54.1
+	go install github.com/envoyproxy/protoc-gen-validate@v0.6.7
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2.0
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.10.0
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.10.0
+
 test:
 	@echo "Testing ..."
 	@go test -failfast ./...
