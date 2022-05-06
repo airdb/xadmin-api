@@ -12,6 +12,14 @@ run: gen-api
 	@go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go \
 		config config/config.yml
 
+dev-local: gen-api
+	@go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go \
+		config config/config.yml \
+		--additional-files config/config_local.yml
+
+build: gen-api
+	@go build -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go
+
 gen-api:
 	@buf generate
 
