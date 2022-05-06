@@ -18,6 +18,7 @@ option java_package = "com.github.airdb.xadmin-api.passport.v1";
 
 service PassportService {
   // Login 账号密码登录
+  //
   // authz: passport.login,*,get
   rpc Login(LoginRequest) returns (LoginResponse) {
     option (google.api.http) = {
@@ -27,6 +28,7 @@ service PassportService {
   }
 
   // Preset 获取SSO登录链接.
+  //
   // authz: passport.preset,*,get
   rpc Preset(PresetRequest) returns (PresetResponse) {
     option (google.api.http) = {
@@ -35,6 +37,7 @@ service PassportService {
   }
 
   // Callback SSO登录回调
+  //
   // authz: passport.callback,*,get
   rpc Callback(CallbackRequest) returns (CallbackResponse) {
     option (google.api.http) = {
@@ -45,6 +48,7 @@ service PassportService {
   }
 
   // Profile 当前登录用户信息
+  //
   // authz: passport.profile,*,get
   rpc Profile(ProfileRequest) returns (ProfileResponse) {
     option (google.api.http) = {
@@ -53,6 +57,7 @@ service PassportService {
   }
 
   // Logout 登出
+  //
   // authz: passport.logout,*,get
   rpc Logout(LogoutRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {

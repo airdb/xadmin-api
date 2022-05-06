@@ -46,7 +46,7 @@ service BchmService {
     };
   }
 
-  // UpdateLost 当前登录用户信息
+  // UpdateLost 走失信息 更新.
   //
   // authz: bchm.lost,id,update
   rpc UpdateLost(UpdateLostRequest) returns (UpdateLostResponse) {
@@ -56,7 +56,7 @@ service BchmService {
     };
   }
 
-  // DeleteLost 登出
+  // DeleteLost 走失信息 删除.
   //
   // authz: bchm.lost,id,get
   rpc DeleteLost(DeleteLostRequest) returns (google.protobuf.Empty) {
