@@ -31,7 +31,7 @@ type LostEntity struct {
 	UUID      string `json:"uuid"`
 	AvatarURL string `json:"avatar_url"`
 	Nickname  string `json:"nickname"`
-	// 性别 0: unknown,  1: male   2: female
+	// 性别 0:unknown, 1:male, 2:female
 	Gender uint `json:"gender"`
 	// 标题
 	Title string `json:"title"`
@@ -60,6 +60,17 @@ type LostEntity struct {
 	SyncStatus int    `gorm:"column:syncstatus;default:0" json:"sync_status"`
 }
 
-func (e LostEntity) TableName() string {
+func (e *LostEntity) TableName() string {
 	return "tab_lost"
 }
+
+// func (e *LostEntity) BeforeUpdate(tx *gorm.DB) (err error) {
+// 	mutates := storagekit.Changed(tx.Statement)
+
+// 	// if no fields changed
+// 	if mutates == nil {
+// 		tx.Statement.BuildClauses = nil
+// 	}
+
+// 	return nil
+// }

@@ -64,7 +64,7 @@ func (w *bchmImpl) UpdateLost(ctx context.Context, request *bchmv1.UpdateLostReq
 	if err == nil {
 		result, err = w.deps.Controller.UpdateLost(ctx, request)
 	}
-	w.log.WithError(err).Debug(ctx, "logout request")
+	w.log.WithError(err).Debug(ctx, "update lost done")
 	return
 }
 
@@ -74,6 +74,6 @@ func (w *bchmImpl) DeleteLost(ctx context.Context, request *bchmv1.DeleteLostReq
 	if err == nil {
 		result, err = w.deps.Controller.DeleteLost(ctx, request)
 	}
-	w.log.WithError(err).Debug(ctx, "logout request")
+	w.log.WithError(err).Debug(ctx, "delete lost done")
 	return
 }

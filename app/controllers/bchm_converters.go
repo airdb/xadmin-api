@@ -7,7 +7,18 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type bchmConvert struct{}
+type bchmConvert struct {
+	NamingMap map[string]string
+}
+
+func newBchmConvert() *bchmConvert {
+	return &bchmConvert{
+		NamingMap: map[string]string{
+			"id":   "",
+			"name": "nickname",
+		},
+	}
+}
 
 // FromProtoLostToModelLost converts proto model to our data Entity
 func (c bchmConvert) FromProtoLostToModelLost(request *bchmv1.Lost) *data.LostEntity {
@@ -102,4 +113,11 @@ func (c bchmConvert) FromModelLostToProtoLost(in *data.LostEntity) *bchmv1.Lost 
 		DataFrom: in.DataFrom,
 		Follower: in.Follower,
 	}
+}
+
+func (c *bchmConvert) UpdateNaming(s string) string {
+	if _, ok := c.NamingMap[s]; ok {
+		return c.NamingMap[s]
+	}
+	return s
 }

@@ -38,7 +38,7 @@ func CreateBchmServiceController(deps bchmInfoControllerDeps) BchmServiceControl
 	return &bchmInfoController{
 		deps:   deps,
 		log:    deps.Logger.WithField("controller", "bchm"),
-		conver: &bchmConvert{},
+		conver: newBchmConvert(),
 	}
 }
 
@@ -92,12 +92,21 @@ func (c *bchmInfoController) CreateLost(ctx context.Context, request *bchmv1.Cre
 
 func (c *bchmInfoController) UpdateLost(ctx context.Context, request *bchmv1.UpdateLostRequest) (*bchmv1.UpdateLostResponse, error) {
 	c.log.Debug(ctx, "update lost accepted")
+	data := c.conver.FromProtoLostToModelLost(request.GetLost())
 
-	item := c.conver.FromProtoLostToModelLost(request.GetLost())
-	err := c.deps.LostRepo.Update(ctx, item.ID, item, querykit.NewField(request.GetUpdateMask()))
+	fm := querykit.NewField(request.GetUpdateMask(), c.conver.UpdateNaming)
+	fm.AddOmit("id")
+
+	err := c.deps.LostRepo.Update(ctx, data.ID, data, fm)
 	if err != nil {
 		c.log.WithError(err).Debug(ctx, "update lost item failed")
 		return nil, errors.New("update lost item failed")
+	}
+
+	item, err := c.deps.LostRepo.Get(ctx, uint(data.ID))
+	if err != nil || item == nil {
+		c.log.WithError(err).Debug(ctx, "update lost item not exist")
+		return nil, errors.New("update lost item not exist")
 	}
 
 	return &bchmv1.UpdateLostResponse{

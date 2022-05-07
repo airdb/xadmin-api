@@ -90,7 +90,7 @@ func (interceptor *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 
 		user, err := auth.GetUser(claims.User.Name)
 		if err != nil {
-			interceptor.log.WithError(err).Debug(ctx, "get user error")
+			interceptor.log.WithError(err).Debug(ctx, "get oauth user error")
 		}
 
 		return handler(common.NewCasdoorContext(ctx, user), req)

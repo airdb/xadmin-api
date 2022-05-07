@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/alecthomas/kong v0.5.0
 	github.com/casdoor/casdoor-go-sdk v0.4.0
+	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/go-masonry/bjaeger v1.0.12
 	github.com/go-masonry/bprometheus v1.0.12
 	github.com/go-masonry/bviper v1.0.12
