@@ -34,6 +34,7 @@ func (c passportConvert) FromClaimsUserToProtoInfo(user *auth.User) *passportv1.
 	if user == nil {
 		return nil
 	}
+
 	return &passportv1.Info{
 		Id:          user.Id,
 		Name:        user.Name,
@@ -42,5 +43,8 @@ func (c passportConvert) FromClaimsUserToProtoInfo(user *auth.User) *passportv1.
 		Avatar:      user.Avatar,
 		Email:       user.Email,
 		Phone:       user.Phone,
+		IsAdmin:     user.IsAdmin,
+		IsForbidden: user.IsForbidden,
+		IsDeleted:   user.IsDeleted,
 	}
 }

@@ -1,4 +1,4 @@
-package common
+package authkit
 
 import (
 	"context"
@@ -12,11 +12,11 @@ const (
 	casdoorUserCtx casdoorContext = 1
 )
 
-func NewCasdoorContext(ctx context.Context, user *auth.User) context.Context {
+func NewContextUser(ctx context.Context, user *auth.User) context.Context {
 	return context.WithValue(ctx, casdoorUserCtx, user)
 }
 
-func FromCurrentCasdoorContext(ctx context.Context) *auth.User {
+func FromContextUser(ctx context.Context) *auth.User {
 	user, ok := ctx.Value(casdoorUserCtx).(*auth.User)
 	if !ok {
 		return nil

@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/airdb/xadmin-api/app/common"
+	"github.com/airdb/xadmin-api/pkg/authkit"
 	"github.com/casdoor/casdoor-go-sdk/auth"
 	"github.com/go-masonry/mortar/auth/jwt"
 	jwtInt "github.com/go-masonry/mortar/interfaces/auth/jwt"
@@ -93,7 +93,7 @@ func (interceptor *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 			interceptor.log.WithError(err).Debug(ctx, "get oauth user error")
 		}
 
-		return handler(common.NewCasdoorContext(ctx, user), req)
+		return handler(authkit.NewContextUser(ctx, user), req)
 	}
 }
 

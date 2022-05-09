@@ -76,6 +76,9 @@ message Info {
   string avatar = 5;
   string email = 6;
   string phone = 7;
+  bool is_admin = 100;
+  bool is_forbidden = 101;
+  bool is_deleted = 102;
 }
 
 message PresetRequest {}

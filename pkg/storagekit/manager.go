@@ -48,14 +48,7 @@ func (m *Manager) Open(cc *ConnectionConfig) (*gorm.DB, error) {
 			sqlDB.SetConnMaxLifetime(time.Hour)
 		}
 
-		err = db.Callback().Update().Before("gorm:update").
-			Register("no_change_skip", func(d *gorm.DB) {
-				mutates := Changed(d.Statement)
-				// if no fields changed
-				if mutates == nil {
-					d.Statement.BuildClauses = nil
-				}
-			})
+		err = registerPlugins(db)
 		if err != nil {
 			return nil, err
 		}

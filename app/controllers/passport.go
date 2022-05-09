@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/airdb/xadmin-api/app/common"
 	"github.com/airdb/xadmin-api/app/data"
 	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
+	"github.com/airdb/xadmin-api/pkg/authkit"
 	"github.com/casdoor/casdoor-go-sdk/auth"
 	"github.com/go-masonry/mortar/constructors"
 	"github.com/go-masonry/mortar/interfaces/log"
@@ -96,7 +96,7 @@ func (c *passportInfoController) Callback(ctx context.Context, request *passport
 func (c *passportInfoController) Profile(ctx context.Context, request *passportv1.ProfileRequest) (*passportv1.ProfileResponse, error) {
 	c.log.Debug(ctx, "profile accepted")
 
-	user := common.FromCurrentCasdoorContext(ctx)
+	user := authkit.FromContextUser(ctx)
 	if user == nil {
 		return nil, errors.New("can not find profile")
 	}
