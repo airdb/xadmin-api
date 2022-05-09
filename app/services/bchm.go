@@ -39,6 +39,10 @@ func CreateBchmServiceService(deps bchmServiceDeps) bchmv1.BchmServiceServer {
 
 func (w *bchmImpl) ListLosts(ctx context.Context, request *bchmv1.ListLostsRequest) (*bchmv1.ListLostsResponse, error) {
 	w.log.WithField("request", request).Debug(ctx, "list lost request")
+	if err := w.deps.Validations.ListLosts(ctx, request); err != nil {
+		return nil, err
+	}
+
 	return w.deps.Controller.ListLosts(ctx, request)
 }
 

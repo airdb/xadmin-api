@@ -51,7 +51,7 @@ service BchmService {
   // authz: bchm.lost,id,update
   rpc UpdateLost(UpdateLostRequest) returns (UpdateLostResponse) {
     option (google.api.http) = {
-      put : "/v1/bchm/lost/{lost.id}"
+      put : "/v1/bchm/lost/{item.id}"
       body: "*"
     };
   }
@@ -98,14 +98,17 @@ message ListLostsRequest {
 }
 
 message ListLostsResponse {
-  repeated Lost losts = 1;
+  int32 total_size = 1;
+  int32 filtered_size =2;
+
+  repeated Lost items = 3;
 }
 
 message GetLostRequest {
   int32 id = 1;
 }
 
-message GetLostResponse { Lost lost = 1; }
+message GetLostResponse { Lost item = 1; }
 
 message CreateLostRequest {
   // 基础信息
@@ -130,13 +133,13 @@ message CreateLostRequest {
 	string follower = 16; // 跟进志愿者
 }
 
-message CreateLostResponse { Lost lost = 1; }
+message CreateLostResponse { Lost item = 1; }
 
 message UpdateLostRequest {
-  Lost lost = 1;
+  Lost item = 1;
   google.protobuf.FieldMask update_mask = 3;
 }
 
-message UpdateLostResponse { Lost lost = 1; }
+message UpdateLostResponse { Lost item = 1; }
 
 message DeleteLostRequest { int32 id = 1; }

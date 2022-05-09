@@ -142,17 +142,24 @@ func (r *Repo[TEntity, TKey, TQuery]) First(ctx context.Context, query *TQuery) 
 	return &item, nil
 }
 
-func (r *Repo[TEntity, TKey, TQuery]) Count(ctx context.Context, query *TQuery) (total int64, filtered int64, err error) {
-	var e TEntity
+func (r *Repo[TEntity, TKey, TQuery]) Count(ctx context.Context, query *TQuery) (int32, int32, error) {
+	var (
+		total    int64
+		filtered int64
+		err      error
+		e        TEntity
+	)
 	db := r.getDB(ctx).Model(&e)
 	err = db.Count(&total).Error
 	if err != nil {
-		return
+		return int32(total), int32(filtered), err
 	}
+
 	db = db.Scopes(r.buildFilterScope(query))
 	err = db.Count(&filtered).Error
-	return
+	return int32(total), int32(filtered), err
 }
+
 func (r *Repo[TEntity, TKey, TQuery]) Get(ctx context.Context, id TKey) (*TEntity, error) {
 	var entity TEntity
 	err := r.getDB(ctx).Model(&entity).

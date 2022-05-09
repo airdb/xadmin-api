@@ -44,14 +44,26 @@ func CreateBchmServiceController(deps bchmInfoControllerDeps) BchmServiceControl
 
 func (c *bchmInfoController) ListLosts(ctx context.Context, request *bchmv1.ListLostsRequest) (*bchmv1.ListLostsResponse, error) {
 	c.log.Debug(ctx, "list losts accepted")
+
+	total, filtered, err := c.deps.LostRepo.Count(ctx, request)
+	if err != nil {
+		c.log.WithError(err).Debug(ctx, "list losts count error")
+		return nil, errors.New("list losts count error")
+	}
+	if total == 0 {
+		return nil, errors.New("losts is empty")
+	}
+
 	items, err := c.deps.LostRepo.List(ctx, request)
 	if err != nil {
 		c.log.WithError(err).Debug(ctx, "list losts error")
-		return nil, errors.New("name not exist")
+		return nil, errors.New("list losts error")
 	}
 
 	return &bchmv1.ListLostsResponse{
-		Losts: func() []*bchmv1.Lost {
+		TotalSize:    total,
+		FilteredSize: filtered,
+		Items: func() []*bchmv1.Lost {
 			res := make([]*bchmv1.Lost, len(items))
 			for i := 0; i < len(items); i++ {
 				res[i] = c.conver.FromModelLostToProtoLost(items[i])
@@ -71,7 +83,7 @@ func (c *bchmInfoController) GetLost(ctx context.Context, request *bchmv1.GetLos
 	}
 
 	return &bchmv1.GetLostResponse{
-		Lost: c.conver.FromModelLostToProtoLost(item),
+		Item: c.conver.FromModelLostToProtoLost(item),
 	}, err
 }
 
@@ -86,13 +98,13 @@ func (c *bchmInfoController) CreateLost(ctx context.Context, request *bchmv1.Cre
 	}
 
 	return &bchmv1.CreateLostResponse{
-		Lost: c.conver.FromModelLostToProtoLost(item),
+		Item: c.conver.FromModelLostToProtoLost(item),
 	}, err
 }
 
 func (c *bchmInfoController) UpdateLost(ctx context.Context, request *bchmv1.UpdateLostRequest) (*bchmv1.UpdateLostResponse, error) {
 	c.log.Debug(ctx, "update lost accepted")
-	data := c.conver.FromProtoLostToModelLost(request.GetLost())
+	data := c.conver.FromProtoLostToModelLost(request.GetItem())
 
 	fm := querykit.NewField(request.GetUpdateMask(), c.conver.UpdateNaming)
 	fm.AddOmit("id")
@@ -110,7 +122,7 @@ func (c *bchmInfoController) UpdateLost(ctx context.Context, request *bchmv1.Upd
 	}
 
 	return &bchmv1.UpdateLostResponse{
-		Lost: c.conver.FromModelLostToProtoLost(item),
+		Item: c.conver.FromModelLostToProtoLost(item),
 	}, err
 }
 

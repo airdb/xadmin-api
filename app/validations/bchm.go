@@ -24,6 +24,13 @@ func CreateBchmServiceValidations() BchmServiceValidations {
 }
 
 func (w *bchmServiceValidations) ListLosts(ctx context.Context, request *bchmv1.ListLostsRequest) error {
+	if request.GetPageSize() == 0 {
+		request.PageSize = 10
+	}
+	if request.GetPageOffset() < 0 {
+		request.PageOffset = 0
+	}
+
 	return nil
 }
 

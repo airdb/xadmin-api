@@ -11,7 +11,7 @@ import (
 type Repo[TEntity any, TKey any, TQuery any] interface {
 	List(ctx context.Context, query *TQuery) ([]*TEntity, error)
 	First(ctx context.Context, query *TQuery) (*TEntity, error)
-	Count(ctx context.Context, query *TQuery) (total int64, filtered int64, err error)
+	Count(ctx context.Context, query *TQuery) (total int32, filtered int32, err error)
 	Get(ctx context.Context, id TKey) (*TEntity, error)
 	Create(ctx context.Context, entity *TEntity) error
 	BatchCreate(ctx context.Context, entity []*TEntity, batchSize int) error
