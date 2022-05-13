@@ -1,17 +1,11 @@
 syntax = "proto3";
 
-package api.helper.v1;
+package helper.v1;
 
 import "google/api/annotations.proto";
-import "google/api/client.proto";
-import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/field_mask.proto";
-import "google/protobuf/struct.proto";
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
 
-option go_package = "github.com/airdb/xadmin-api/genproto/api/helper/v1;helperv1";
+option go_package = "github.com/airdb/xadmin-api/genproto/helper/v1;helperv1";
 option java_multiple_files = true;
 option java_outer_classname = "InternalProto";
 option java_package = "com.github.airdb.xadmin-api.helper.v1";

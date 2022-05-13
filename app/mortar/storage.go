@@ -46,7 +46,7 @@ func StorageInterceptor(deps storageInterceptorDeps) grpc.UnaryServerInterceptor
 		pkgStr := strings.Split(strings.Trim(info.FullMethod, "/"), "/")[0]
 		pkgInfo := strings.Split(pkgStr, ".")
 
-		db, err := storagekit.GetDB(deps.Config, pkgInfo[1])
+		db, err := storagekit.GetDB(deps.Config, pkgInfo[0])
 		if err != nil {
 			log.Warn(ctx, "cat get db with %s's database", pkgStr)
 			return handler(ctx, req)

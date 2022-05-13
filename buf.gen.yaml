@@ -3,7 +3,7 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: githug.com/airdb/xadmin-api/genproto
+    default: github.com/airdb/xadmin-api/genproto
     except:
       - buf.build/googleapis/googleapis
       - buf.build/einride/iam

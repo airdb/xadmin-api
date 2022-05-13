@@ -201,18 +201,18 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 
 	db = db.Model(&e)
 	if p == nil {
-		db = db.Select("*")
-	} else {
-		pathKeep := p.Keep().Paths
-		pathOmit := p.Omit().Paths
-		if len(pathKeep) == 0 {
-			db = db.Select("*")
-		} else {
-			db = db.Select(pathKeep)
-		}
-		if len(pathOmit) > 0 {
-			db = db.Omit(pathOmit...)
-		}
+		return errors.New("no effect")
+	}
+
+	pathKeep := p.Keep().Paths
+	if len(pathKeep) == 0 {
+		return errors.New("no effect")
+	}
+
+	db = db.Select(pathKeep)
+	pathOmit := p.Omit().Paths
+	if len(pathOmit) > 0 {
+		db = db.Omit(pathOmit...)
 	}
 
 	if u, ok := r.override.(UpdateAssociation[TEntity]); ok {

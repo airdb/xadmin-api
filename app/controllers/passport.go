@@ -3,12 +3,15 @@ package controllers
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/airdb/xadmin-api/app/data"
 	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
 	"github.com/airdb/xadmin-api/pkg/authkit"
 	"github.com/casdoor/casdoor-go-sdk/auth"
 	"github.com/go-masonry/mortar/constructors"
+	"github.com/go-masonry/mortar/interfaces/cfg"
 	"github.com/go-masonry/mortar/interfaces/log"
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/fx"
@@ -22,6 +25,7 @@ type PassportServiceController interface {
 type passportInfoControllerDeps struct {
 	fx.In
 
+	Config cfg.Config
 	DB     data.PassportRepo
 	Logger log.Logger
 }
@@ -32,6 +36,7 @@ type passportInfoController struct {
 	deps   passportInfoControllerDeps
 	log    log.Fields
 	conver *passportConvert
+	domain string
 }
 
 // CreatePassportServiceController is a constructor for Fx
@@ -40,6 +45,7 @@ func CreatePassportServiceController(deps passportInfoControllerDeps) PassportSe
 		deps:   deps,
 		log:    deps.Logger.WithField("controller", "passport"),
 		conver: &passportConvert{},
+		domain: strings.Trim(deps.Config.Get("xadmin.domain").String(), "/"),
 	}
 }
 
@@ -47,7 +53,9 @@ func (c *passportInfoController) Preset(ctx context.Context, request *passportv1
 	c.log.Debug(ctx, "preset accepted")
 
 	return &passportv1.PresetResponse{
-		Url: auth.GetSigninUrl("http://localhost:5381/v1/passport/callback"),
+		Url: auth.GetSigninUrl(
+			fmt.Sprintf("%s/v1/passport/callback", c.domain),
+		),
 	}, nil
 }
 

@@ -106,8 +106,7 @@ func (c *bchmInfoController) UpdateLost(ctx context.Context, request *bchmv1.Upd
 	c.log.Debug(ctx, "update lost accepted")
 	data := c.conver.FromProtoLostToModelLost(request.GetItem())
 
-	fm := querykit.NewField(request.GetUpdateMask(), c.conver.UpdateNaming)
-	fm.AddOmit("id")
+	fm := querykit.NewField(request.GetUpdateMask(), request.GetItem()).WithAction("update")
 
 	err := c.deps.LostRepo.Update(ctx, data.ID, data, fm)
 	if err != nil {

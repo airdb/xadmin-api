@@ -21,6 +21,7 @@ func HttpServerFxOptions() fx.Option {
 		providers.GRPCGatewayMetadataTraceCarrierFxOption(), // read it's documentation to understand better
 		providers.LoggerGRPCInterceptorFxOption(),
 		providers.MonitorGRPCInterceptorFxOption(),
+		GRPCGatewayMetadataFxOption(),
 		BuildAuthFxOptions(),
 		BuildStorageFxOption(),
 	)

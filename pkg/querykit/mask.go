@@ -1,6 +1,7 @@
 package querykit
 
 import (
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/proto"
 	fmpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 )
@@ -14,32 +15,34 @@ func (nm NamingMap) Name(s string) string {
 	return s
 }
 
-type Nameing interface {
-	func(string) string | map[string]string
+type KitFieldMask interface {
+	KitFieldsByActions(action ...string) []string
+	KitMaskMap(field string) string
 }
 
 type FieldMask struct {
 	keep *fmpb.FieldMask
 	omit *fmpb.FieldMask
 
-	naming func(string) string
+	restrict []string
+	kit      KitFieldMask
 }
 
-func NewField[T Nameing](f *fmpb.FieldMask, n T) *FieldMask {
+func NewField(f *fmpb.FieldMask, k KitFieldMask) *FieldMask {
 	fm := &FieldMask{
 		keep: f,
 		omit: &fmpb.FieldMask{},
+		kit:  k,
 	}
-	func(n any) {
-		switch nt := n.(type) {
-		case func(string) string:
-			fm.naming = nt
-		case map[string]string:
-			fm.naming = NamingMap(nt).Name
-		}
-	}(n)
-
 	return fm
+}
+
+func (f *FieldMask) WithAction(action string) *FieldMask {
+	if f.kit == nil {
+		return f
+	}
+	f.restrict = f.kit.KitFieldsByActions(action)
+	return f
 }
 
 func (f *FieldMask) Keep() *fmpb.FieldMask {
@@ -47,27 +50,34 @@ func (f *FieldMask) Keep() *fmpb.FieldMask {
 	if !ok {
 		panic("can not clone mask message")
 	}
-	paths := []string{}
-	for _, path := range fm.Paths {
-		if len(path) == 0 {
-			continue
+
+	if fm == nil {
+		fm = &fmpb.FieldMask{
+			Paths: append([]string{}, f.restrict...),
 		}
-		path = f.normalizer(path)
-		if len(path) == 0 {
-			continue
+	} else {
+		paths := []string{}
+		for _, path := range fm.Paths {
+			if len(path) == 0 {
+				continue
+			}
+			paths = append(paths, path)
 		}
-		paths = append(paths, path)
+		fm.Paths = paths
 	}
-	fm.Paths = paths
+	fm.Paths = f.normalizer(lo.Intersect(f.restrict, fm.Paths)...)
+
 	return fm
 }
 
-func (f *FieldMask) SetOmit(fm *fmpb.FieldMask) {
+func (f *FieldMask) SetOmit(fm *fmpb.FieldMask) *FieldMask {
 	f.omit = fm
+	return f
 }
 
-func (f *FieldMask) AddOmit(s ...string) {
+func (f *FieldMask) AddOmit(s ...string) *FieldMask {
 	f.omit.Paths = append(f.omit.Paths, s...)
+	return f
 }
 
 func (f *FieldMask) Omit() *fmpb.FieldMask {
@@ -80,20 +90,29 @@ func (f *FieldMask) Omit() *fmpb.FieldMask {
 		if len(path) == 0 {
 			continue
 		}
-		path = f.normalizer(path)
 		if len(path) == 0 {
 			continue
 		}
 		paths = append(paths, path)
 	}
-	fm.Paths = paths
+	fm.Paths = f.normalizer(paths...)
+
 	return fm
 }
 
-func (f *FieldMask) normalizer(s string) string {
-	if f.naming == nil {
-		return s
+func (f *FieldMask) normalizer(fields ...string) []string {
+	if f.kit == nil {
+		return fields
 	}
 
-	return f.naming(s)
+	res := []string{}
+	for _, field := range fields {
+		field = f.kit.KitMaskMap(field)
+		if len(field) == 0 {
+			continue
+		}
+		res = append(res, field)
+	}
+
+	return res
 }

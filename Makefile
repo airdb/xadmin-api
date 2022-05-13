@@ -8,28 +8,32 @@ export JAEGER_AGENT_PORT = 6831
 export JAEGER_SAMPLER_TYPE = const
 export JAEGER_SAMPLER_PARAM = 1
 
-run: gen-api
+run: buf
 	@go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go \
 		config config/config.yml
 
-dev-local: gen-api
+dev-local: buf
 	@go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go \
 		config config/config.yml \
 		--additional-files config/config_local.yml
 
-build: gen-api
+build: buf
 	@go build -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go
 
-gen-api:
+buf:
 	@buf generate
+	@buf generate --template buf.gen.patch.yaml
+	@go install ./cmd/protoc-gen-kit
+	@buf generate --template buf.gen.kit.yaml
 
-deps:
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.0
-	go install go.einride.tech/aip/cmd/protoc-gen-go-aip@v0.54.1
-	go install github.com/envoyproxy/protoc-gen-validate@v0.6.7
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2.0
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.10.0
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.10.0
+plugins:
+	@go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.0
+	@go install go.einride.tech/aip/cmd/protoc-gen-go-aip@v0.54.1
+	@go install github.com/envoyproxy/protoc-gen-validate@v0.6.7
+	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2.0
+	@go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.10.0
+	@go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.10.0
+	@go install ./cmd/protoc-gen-patch
 
 test:
 	@echo "Testing ..."
