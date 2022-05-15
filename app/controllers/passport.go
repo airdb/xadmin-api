@@ -51,11 +51,13 @@ func CreatePassportServiceController(deps passportInfoControllerDeps) PassportSe
 
 func (c *passportInfoController) Preset(ctx context.Context, request *passportv1.PresetRequest) (*passportv1.PresetResponse, error) {
 	c.log.Debug(ctx, "preset accepted")
+	domain := request.GetRedirectUri()
+	if len(domain) == 0 {
+		domain = fmt.Sprintf("%s/v1/passport/callback", c.domain)
+	}
 
 	return &passportv1.PresetResponse{
-		Url: auth.GetSigninUrl(
-			fmt.Sprintf("%s/v1/passport/callback", c.domain),
-		),
+		Url: auth.GetSigninUrl(domain),
 	}, nil
 }
 

@@ -75,7 +75,9 @@ message Info {
   bool is_deleted = 102;
 }
 
-message PresetRequest {}
+message PresetRequest {
+  string redirect_uri = 1;
+}
 
 message PresetResponse { string url = 1; }
 
