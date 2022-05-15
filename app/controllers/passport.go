@@ -97,7 +97,7 @@ func (c *passportInfoController) Callback(ctx context.Context, request *passport
 
 	return &passportv1.CallbackResponse{
 		Info:  c.conver.FromClaimsUserToProtoInfo(user),
-		Token: token.AccessToken,
+		Token: fmt.Sprintf("%s %s", token.TokenType, token.AccessToken),
 	}, nil
 }
 

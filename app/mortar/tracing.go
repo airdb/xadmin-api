@@ -2,10 +2,10 @@ package mortar
 
 import (
 	"context"
-	confkeys "github.com/go-masonry/mortar/interfaces/cfg/keys"
 
 	"github.com/go-masonry/bjaeger"
 	"github.com/go-masonry/mortar/interfaces/cfg"
+	confkeys "github.com/go-masonry/mortar/interfaces/cfg/keys"
 	"github.com/go-masonry/mortar/interfaces/log"
 	opentracing "github.com/opentracing/opentracing-go"
 	"go.uber.org/fx"
