@@ -41,3 +41,9 @@ func (w *teamworkImpl) ListOnduty(ctx context.Context, request *teamworkv1.ListO
 
 	return w.deps.Controller.ListOnduty(ctx, request)
 }
+
+func (w *teamworkImpl) ListTaskByProject(ctx context.Context, request *teamworkv1.ListTaskByProjectRequest) (*teamworkv1.ListTaskByProjectResponse, error) {
+	w.log.WithField("request", request).Debug(ctx, "list task by project request")
+
+	return w.deps.Controller.ListTaskByProject(ctx, request)
+}

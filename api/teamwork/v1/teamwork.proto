@@ -20,7 +20,8 @@ service TeamworkService {
 
   rpc ListTaskByProject(ListTaskByProjectRequest) returns (ListTaskByProjectResponse) {
     option (google.api.http) = {
-      get: "/v1/teamwork/task/{project_id}"
+      get: "/v1/teamwork/project"
+      // get: "/v1/teamwork/task/{project_id}"
     };
   }
 
@@ -48,7 +49,17 @@ message ListOndutyRequest {
 }
 
 message ListOndutyResponse {
-  string onduty_email = 1;
+  repeated Onduty schedule = 1;
+}
+
+message Onduty {
+  int32 id = 1;
+  int32 year = 2;
+  int32 week = 3;
+  string team_name = 4;
+  string onduty_email = 5;
+  string created_by = 6;
+  string created_at = 7;
 }
 
 message ListTaskByProjectRequest {
@@ -57,7 +68,25 @@ message ListTaskByProjectRequest {
   int32 project_id = 3;
 }
 message ListTaskByProjectResponse {
-  string task = 1;
+  repeated Project project = 1;
+}
+
+message Project {
+  int32 id = 1;
+  string project_name = 2;
+  string project_milestone = 3;
+  string created_by = 4;
+  string created_at = 5;
+  repeated TaskProcess task_process = 6;
+  string project_status = 7;
+}
+
+message TaskProcess {
+  string email = 1;
+  string this_week = 2;
+  string next_week = 3;
+  string updated_by = 4;
+  string updated_at = 5;
 }
 
 message ListTaskByUserRequest {

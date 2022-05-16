@@ -41,12 +41,70 @@ func CreateTeamworkServiceController(deps teamworkInfoControllerDeps) TeamworkSe
 
 func (c *teamworkInfoController) ListOnduty(ctx context.Context, request *teamworkv1.ListOndutyRequest) (*teamworkv1.ListOndutyResponse, error) {
 	c.log.Debug(ctx, "list onduty accepted")
-	return nil, status.Errorf(codes.Unimplemented, "method ListOnduty not implemented")
+	return &teamworkv1.ListOndutyResponse{
+		// Return recent 3 weeks.
+		Schedule: []*teamworkv1.Onduty{
+			{
+				Id:          1,
+				Year:        2022,
+				Week:        19,
+				TeamName:    "airdb",
+				OndutyEmail: "dean@airdb.net",
+				CreatedAt:   "2020-01-01",
+				CreatedBy:   "dean",
+			},
+			{
+				Id:          2,
+				Year:        2022,
+				Week:        20,
+				TeamName:    "airdb",
+				OndutyEmail: "dean@airdb.net",
+				CreatedAt:   "2020-01-01",
+				CreatedBy:   "dean",
+			},
+			{
+				Id:          3,
+				Year:        2022,
+				Week:        21,
+				TeamName:    "airdb",
+				OndutyEmail: "dean@airdb.net",
+				CreatedAt:   "2020-01-01",
+				CreatedBy:   "dean",
+			},
+		},
+	}, nil
 }
 
 func (c *teamworkInfoController) ListTaskByProject(ctx context.Context, request *teamworkv1.ListTaskByProjectRequest) (*teamworkv1.ListTaskByProjectResponse, error) {
 	c.log.Debug(ctx, "list task by project accepted")
-	return nil, status.Errorf(codes.Unimplemented, "method ListTaskByProject not implemented")
+
+	return &teamworkv1.ListTaskByProjectResponse{
+		Project: []*teamworkv1.Project{
+			{
+				Id:               1,
+				ProjectName:      "项目申报",
+				ProjectMilestone: "phase 1: 完成ppt演示",
+				ProjectStatus:    "进行中",
+				TaskProcess: []*teamworkv1.TaskProcess{
+					{
+						Email:    "dean@airdb.net",
+						ThisWeek: "完成ppp demo",
+						NextWeek: "完成ppt演示",
+					},
+					{
+						Email:    "lucy@airdb.net",
+						ThisWeek: "完成 part1",
+						NextWeek: "完成 part2",
+					},
+					{
+						Email:    "lily@airdb.net",
+						ThisWeek: "完成 part3",
+						NextWeek: "完成 part4",
+					},
+				},
+			},
+		},
+	}, nil
 }
 
 func (c *teamworkInfoController) ListTaskByUser(ctx context.Context, request *teamworkv1.ListTaskByUserRequest) (*teamworkv1.ListTaskByUserResponse, error) {
