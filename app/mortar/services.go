@@ -9,6 +9,7 @@ import (
 	"github.com/airdb/xadmin-api/app/validations"
 	bchmv1 "github.com/airdb/xadmin-api/genproto/bchm/v1"
 	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
+	teamworkv1 "github.com/airdb/xadmin-api/genproto/teamwork/v1"
 	serverInt "github.com/go-masonry/mortar/interfaces/http/server"
 	"github.com/go-masonry/mortar/providers/groups"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -22,6 +23,7 @@ type servicesDeps struct {
 	// API Implementations
 	Passport passportv1.PassportServiceServer
 	Bchm     bchmv1.BchmServiceServer
+	Teamwork teamworkv1.TeamworkServiceServer
 }
 
 func ServicesAPIsAndOtherDependenciesFxOption() fx.Option {
@@ -77,5 +79,10 @@ func servicesDependencies() fx.Option {
 		controllers.CreateBchmServiceController,
 		data.NewLostRepo,
 		validations.CreateBchmServiceValidations,
+		// Teamwork dependents
+		services.CreateTeamworkServiceService,
+		controllers.CreateTeamworkServiceController,
+		//data.NewTeamworkRepo,
+		validations.CreateTeamworkServiceValidations,
 	)
 }
