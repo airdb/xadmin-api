@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package errors.v1;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/errors/v1;errorsv1";
+option java_multiple_files = true;
+option java_outer_classname = "ErrorReasonProto";
+option java_package = "com.github.airdb.xadmin-api.errors.v1";
+
+// ErrorReason
+//
+// @Kit
+//  category: error
+//  type: errors.example.arpa/ErrorReason
+//  offset: 0
+//  defaultHttpCode: 500
+enum ErrorReason {
+  // ERRORREASON_UNSPECIFIED
+  //
+  // @Kit
+  //  httpCode: 200
+  //  describe: OK
+  ERRORREASON_UNSPECIFIED = 0;
+
+  // BAD_REQUEST
+  //
+  // @Kit
+  //  httpCode: 400
+  //  describe: bad request.
+  BAD_REQUEST = 1;
+
+  // UNAUTHORIZED
+  //
+  // @Kit
+  //  httpCode: 401
+  //  describe: unauthorized.
+  UNAUTHORIZED = 2;
+
+  // FORBIDDEN
+  //
+  // @Kit
+  //  httpCode: 403
+  //  describe: forbidden.
+  FORBIDDEN = 3;
+
+  // NOT_FOUND
+  //
+  // @Kit
+  //  httpCode: 404
+  //  describe: not found.
+  NOT_FOUND = 4;
+
+  // CONFLICT
+  //
+  // @Kit
+  //  httpCode: 409
+  //  describe: conflict.
+  CONFLICT = 5;
+
+  // INTERNAL_SERVER
+  //
+  // @Kit
+  //  httpCode: 500
+  //  describe: internal server.
+  INTERNAL_SERVER = 6;
+
+  // SERVICE_UNAVAILABLE
+  //
+  // @Kit
+  //  httpCode: 503
+  //  describe: service unavailable.
+  SERVICE_UNAVAILABLE = 7;
+
+  // GATEWAY_TIMEOUT
+  //
+  // @Kit
+  //  httpCode: 504
+  //  describe: gateway timeout.
+  GATEWAY_TIMEOUT = 8;
+
+  // CLIENT_CLOSED
+  //
+  // @Kit
+  //  httpCode: 499
+  //  describe: client closed.
+  CLIENT_CLOSED = 9;
+}

@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package annotation.v1;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/annotation/v1;annov1";
+option java_multiple_files = true;
+option java_outer_classname = "ErrorProto";
+option java_package = "com.github.airdb.xadmin-api.annotation.v1";
+
+extend google.protobuf.EnumOptions {
+  // An annotation that describes a resource reference.
+  //
+  // Example:
+  //
+  //   message Subscription {
+  //     string topic = 2 [(annotation.v1.error_code) = {
+  //       type: "pubsub.googleapis.com/Topic"
+  //     }];
+  //   }
+  annotation.v1.ErrorEnumCodeDescriptor error_code = 20400;
+}
+
+extend google.protobuf.EnumValueOptions {
+  // An annotation that describes a resource definition.
+  //
+  // Example:
+  //
+  //     message Topic {
+  //       option (annotation.v1.error_value) = {
+  //         type: "pubsub.googleapis.com/Topic"
+  //         pattern: "projects/{project}/topics/{topic}"
+  //       };
+  //     }
+  ErrorEnumValueDescriptor error_value = 20500;
+}
+
+message ErrorEnumCodeDescriptor {
+  // The resource type. It must be in the format of
+  // {service_name}/{resource_type_kind}. The `resource_type_kind` must be
+  // singular and must not include version numbers.
+  //
+  // Example: `storage.googleapis.com/Bucket`
+  //
+  // The value of the resource_type_kind must follow the regular expression
+  // /[A-Za-z][a-zA-Z0-9]+/. It should start with an upper case character and
+  // should use PascalCase (UpperCamelCase). The maximum number of
+  // characters allowed for the `resource_type_kind` is 100.
+  string type = 1;
+
+  string category = 2;
+
+  // Optional. The offset of code.
+  int32 offset = 3;
+
+  // Optional. The default http code.
+  //
+  // @Kit
+  //  tags:
+  //    yaml: defaultHttpCode
+  int32 default_http_code = 4;
+
+  // Optional. The default describe.
+  //
+  // @Kit
+  //  tags:
+  //    yaml: defaultDescribe
+  string default_describe = 5;
+}
+
+message ErrorEnumValueDescriptor {
+  // HTTPCode
+  //
+  // @Kit
+  //  tags:
+  //    yaml: httpCode
+  int32 http_code = 1;
+  string describe = 2;
+}
+
+message Error {
+  int32 code = 1;
+  string reason = 2;
+  string message = 3;
+  map<string, string> metadata = 4;
+}

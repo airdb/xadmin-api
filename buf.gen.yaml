@@ -1,0 +1,49 @@
+version: v1
+
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/airdb/xadmin-api/genproto
+    except:
+      - buf.build/googleapis/googleapis
+      - buf.build/einride/iam
+      - buf.build/envoyproxy/protoc-gen-validate
+      - buf.build/grpc-ecosystem/grpc-gateway
+
+plugins:
+  # Golang
+  - name: go
+    out: genproto
+    opt:
+      - paths=source_relative
+      - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
+  - name: go-aip
+    out: genproto
+    opt:
+      - paths=source_relative
+      - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
+  - name: validate
+    out: genproto
+    opt:
+      - lang=go
+      - paths=source_relative
+      - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
+  - name: go-grpc
+    out: genproto
+    opt:
+      - paths=source_relative
+      - require_unimplemented_servers=false
+      - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
+  - name: grpc-gateway
+    out: genproto
+    opt:
+      - paths=source_relative
+      - allow_repeated_fields_in_body=true
+      - generate_unbound_methods=true
+      - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
+  - name: openapiv2
+    out: genproto
+    opt:
+      - allow_repeated_fields_in_body=true
+      - use_go_templates=true
+      - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1

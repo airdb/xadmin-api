@@ -4,6 +4,9 @@
 *.dll
 *.so
 *.dylib
+__debug_bin
+xadmin-api
+main
 
 # Test binary, built with `go test -c`
 *.test

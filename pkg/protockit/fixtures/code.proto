@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package api.fixtures.v1;
+
+option go_package = "github.com/airdb/xadmin-api/genproto/fixture;fixturepb";
+option java_multiple_files = true;
+option java_outer_classname = "CodeProto";
+option java_package = "com.github.airdb.xadmin-api.fixtures";
+
+// ErrorReason
+//
+// @Kit
+//  category: error
+//  type: errors.example.arpa/Code
+//  offset: 0
+//  defaultHttpCode: 500
+enum Code {
+
+  // UNIVERSAL
+  //
+  // @Kit
+  //  describe: error
+  //  httpCode: 500
+  UNIVERSAL = 0;
+
+  // ErrUserNotFound
+  //
+  // @Kit
+  //  describe: User not found
+  ErrUserNotFound = 1;
+
+  // ErrUserNotFound
+  //
+  // @Kit
+  //  describe: User already exist.
+  ErrUserAlreadyExist = 2;
+}

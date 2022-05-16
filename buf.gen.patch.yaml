@@ -1,0 +1,18 @@
+version: v1
+
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/airdb/xadmin-api/genproto
+    except:
+      - buf.build/googleapis/googleapis
+      - buf.build/einride/iam
+      - buf.build/envoyproxy/protoc-gen-validate
+      - buf.build/grpc-ecosystem/grpc-gateway
+
+plugins:
+  - name: patch
+    out: genproto
+    opt:
+      - paths=source_relative
+      - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
