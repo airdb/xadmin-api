@@ -16,8 +16,8 @@ service PassportService {
   // authz: passport.login,*,get
   rpc Login(LoginRequest) returns (LoginResponse) {
     option (google.api.http) = {
-      post : "/v1/passport/login"
-      body : "*"
+      post: "/v1/passport/login"
+      body: "*"
     };
   }
 
@@ -26,7 +26,7 @@ service PassportService {
   // authz: passport.preset,*,get
   rpc Preset(PresetRequest) returns (PresetResponse) {
     option (google.api.http) = {
-      get : "/v1/passport/preset"
+      get: "/v1/passport/preset"
     };
   }
 
@@ -35,9 +35,11 @@ service PassportService {
   // authz: passport.callback,*,get
   rpc Callback(CallbackRequest) returns (CallbackResponse) {
     option (google.api.http) = {
-      post : "/v1/passport/callback"
-      body : "*"
-      additional_bindings : {get : "/v1/passport/callback"}
+      post: "/v1/passport/callback"
+      body: "*"
+      additional_bindings: {
+        get: "/v1/passport/callback"
+      }
     };
   }
 
@@ -46,7 +48,7 @@ service PassportService {
   // authz: passport.profile,*,get
   rpc Profile(ProfileRequest) returns (ProfileResponse) {
     option (google.api.http) = {
-      get : "/v1/passport/profile"
+      get: "/v1/passport/profile"
     };
   }
 
@@ -55,8 +57,8 @@ service PassportService {
   // authz: passport.logout,*,get
   rpc Logout(LogoutRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      put : "/v1/passport/logout"
-      body : "*"
+      put: "/v1/passport/logout"
+      body: "*"
     };
   }
 }
@@ -79,7 +81,9 @@ message PresetRequest {
   string redirect_uri = 1;
 }
 
-message PresetResponse { string url = 1; }
+message PresetResponse {
+  string url = 1;
+}
 
 message LoginRequest {
   // name 用户名
@@ -107,7 +111,9 @@ message CallbackResponse {
 
 message ProfileRequest {}
 
-message ProfileResponse { Info info = 1; }
+message ProfileResponse {
+  Info info = 1;
+}
 
 message LogoutRequest {
   // token 授权密钥

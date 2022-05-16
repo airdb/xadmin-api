@@ -75,7 +75,7 @@ message ErrorEnumValueDescriptor {
   // @Kit
   //  tags:
   //    yaml: httpCode
-  int32 http_code = 1; 
+  int32 http_code = 1;
   string describe = 2;
 }
 

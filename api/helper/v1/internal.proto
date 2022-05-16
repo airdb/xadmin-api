@@ -14,61 +14,61 @@ option java_package = "com.github.airdb.xadmin-api.helper.v1";
 service InternalService {
   rpc DebugVars(DebugVarsRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/debug/vars"
+      get: "/debug/vars"
     };
   }
 
   rpc DebugDump(DebugDumpRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/debug/dump"
+      get: "/debug/dump"
     };
   }
 
   rpc DebugStats(DebugStatsRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/debug/stats"
+      get: "/debug/stats"
     };
   }
 
   rpc DebugPprof(DebugPprofRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/debug/pprof"
+      get: "/debug/pprof"
     };
   }
 
   rpc DebugPprofCmdline(DebugPprofCmdlineRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/debug/pprof/cmdline"
+      get: "/debug/pprof/cmdline"
     };
   }
 
   rpc DebugPprofProfile(DebugPprofProfileRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/debug/pprof/profile"
+      get: "/debug/pprof/profile"
     };
   }
 
   rpc DebugPprofSymbol(DebugPprofSymbolRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/debug/pprof/symbol"
+      get: "/debug/pprof/symbol"
     };
   }
 
   rpc DebugPprofTrace(DebugPprofTraceRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/debug/pprof/trace"
+      get: "/debug/pprof/trace"
     };
   }
 
   rpc SelfBuild(SelfBuildRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/self/build"
+      get: "/self/build"
     };
   }
 
   rpc SelfConfig(SelfConfigRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get : "/self/config"
+      get: "/self/config"
     };
   }
 }
