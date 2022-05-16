@@ -17,7 +17,6 @@ option java_package = "com.github.airdb.xadmin-api.errors.v1";
 //  offset: 0
 //  defaultHttpCode: 500
 enum ErrorReason {
-
   // ERRORREASON_UNSPECIFIED
   //
   // @Kit

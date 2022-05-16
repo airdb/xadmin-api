@@ -21,7 +21,7 @@ service BchmService {
   //    - {domain: bchm, object: lost, entity: *, action: list}
   rpc ListLosts(ListLostsRequest) returns (ListLostsResponse) {
     option (google.api.http) = {
-      get : "/v1/bchm/losts"
+      get: "/v1/bchm/losts"
     };
   }
 
@@ -32,7 +32,7 @@ service BchmService {
   //    - {domain: bchm, object: lost, entity: id, action: detail}
   rpc GetLost(GetLostRequest) returns (GetLostResponse) {
     option (google.api.http) = {
-      get : "/v1/bchm/lost/{id}"
+      get: "/v1/bchm/lost/{id}"
     };
   }
 
@@ -43,8 +43,8 @@ service BchmService {
   //    - {domain: bchm, object: lost, entity: *, action: create}
   rpc CreateLost(CreateLostRequest) returns (CreateLostResponse) {
     option (google.api.http) = {
-      post : "/v1/bchm/lost"
-      body : "*"
+      post: "/v1/bchm/lost"
+      body: "*"
     };
   }
 
@@ -55,7 +55,7 @@ service BchmService {
   //    - {domain: bchm, object: lost, entity: item.id, action: update}
   rpc UpdateLost(UpdateLostRequest) returns (UpdateLostResponse) {
     option (google.api.http) = {
-      put : "/v1/bchm/lost/{item.id}"
+      put: "/v1/bchm/lost/{item.id}"
       body: "*"
     };
   }
@@ -67,7 +67,7 @@ service BchmService {
   //    - {domain: bchm, object: lost, entity: id, action: delete}
   rpc DeleteLost(DeleteLostRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      delete : "/v1/bchm/lost/{id}"
+      delete: "/v1/bchm/lost/{id}"
     };
   }
 }
@@ -89,7 +89,7 @@ message Lost {
   //
   // @Kit
   //  actions: [create, update]
-	string name = 2;
+  string name = 2;
 
   // 性别
   //
@@ -98,38 +98,38 @@ message Lost {
   //    - 1 // 男
   //    - 2 // 女
   //    - 0 // 未知
-	uint32 gender = 3;
+  uint32 gender = 3;
   // 出生日期
-	google.protobuf.Timestamp birthed_at = 4;
+  google.protobuf.Timestamp birthed_at = 4;
   // 寻亲目标轮播图
-	repeated string carousel = 5;
+  repeated string carousel = 5;
 
-	// 失踪信息
+  // 失踪信息
 
   // 失踪时间
-	google.protobuf.Timestamp missed_at = 6;
-	string missed_country = 7; // 失踪国家
-	string missed_province = 8; // 失踪省
-	string missed_city = 9; // 失踪市
-	string missed_addr = 10; // 详细地址
-	string missed_height = 11; // 失踪时身高
-	string character = 12; // 特征
-	string details = 13; // 失踪详情
+  google.protobuf.Timestamp missed_at = 6;
+  string missed_country = 7; // 失踪国家
+  string missed_province = 8; // 失踪省
+  string missed_city = 9; // 失踪市
+  string missed_addr = 10; // 详细地址
+  string missed_height = 11; // 失踪时身高
+  string character = 12; // 特征
+  string details = 13; // 失踪详情
 
-	// 寻亲信息
-	string category = 14; // 寻亲类型
-	string data_from = 15; // 信息来源
-	string follower = 16; // 跟进志愿者
+  // 寻亲信息
+  string category = 14; // 寻亲类型
+  string data_from = 15; // 信息来源
+  string follower = 16; // 跟进志愿者
 }
 
 message ListLostsRequest {
-  int32 page_offset =1;
+  int32 page_offset = 1;
   int32 page_size = 2;
 }
 
 message ListLostsResponse {
   int32 total_size = 1;
-  int32 filtered_size =2;
+  int32 filtered_size = 2;
 
   repeated Lost items = 3;
 }
@@ -138,40 +138,48 @@ message GetLostRequest {
   int32 id = 1;
 }
 
-message GetLostResponse { Lost item = 1; }
+message GetLostResponse {
+  Lost item = 1;
+}
 
 message CreateLostRequest {
   // 基础信息
 
   // Name
-	string name = 2; // 姓名
-	uint32 gender = 3; // 性别: 1男 2女 0未知
-	google.protobuf.Timestamp birthed_at = 4; // 出生日期
-	repeated string carousel = 5; // 寻亲目标轮播图
+  string name = 2; // 姓名
+  uint32 gender = 3; // 性别: 1男 2女 0未知
+  google.protobuf.Timestamp birthed_at = 4; // 出生日期
+  repeated string carousel = 5; // 寻亲目标轮播图
 
-	// 失踪信息
-	google.protobuf.Timestamp missed_at = 6; // 失踪时间
-	string missed_country = 7; // 失踪国家
-	string missed_province = 8; // 失踪省
-	string missed_city = 9; // 失踪市
-	string missed_addr = 10; // 详细地址
-	string missed_height = 11; // 失踪时身高
-	string character = 12; // 特征
-	string details = 13; // 失踪详情
+  // 失踪信息
+  google.protobuf.Timestamp missed_at = 6; // 失踪时间
+  string missed_country = 7; // 失踪国家
+  string missed_province = 8; // 失踪省
+  string missed_city = 9; // 失踪市
+  string missed_addr = 10; // 详细地址
+  string missed_height = 11; // 失踪时身高
+  string character = 12; // 特征
+  string details = 13; // 失踪详情
 
-	// 寻亲信息
-	string category = 14; // 寻亲类型
-	string data_from = 15; // 信息来源
-	string follower = 16; // 跟进志愿者
+  // 寻亲信息
+  string category = 14; // 寻亲类型
+  string data_from = 15; // 信息来源
+  string follower = 16; // 跟进志愿者
 }
 
-message CreateLostResponse { Lost item = 1; }
+message CreateLostResponse {
+  Lost item = 1;
+}
 
 message UpdateLostRequest {
   Lost item = 1;
   google.protobuf.FieldMask update_mask = 2;
 }
 
-message UpdateLostResponse { Lost item = 1; }
+message UpdateLostResponse {
+  Lost item = 1;
+}
 
-message DeleteLostRequest { int32 id = 1; }
+message DeleteLostRequest {
+  int32 id = 1;
+}

@@ -13,12 +13,20 @@ run: buf
 		config config/config.yml
 
 dev-local: buf
-	@go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go \
+	@CGO_ENABLED=1 go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go \
 		config config/config.yml \
 		--additional-files config/config_local.yml
 
 build: buf
-	@go build -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go
+	@CGO_ENABLED=1 go build -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go
+
+format:
+	go fmt ./...
+	buf format -w
+
+lint:
+	go vet ./...
+	buf lint
 
 buf:
 	@buf generate
