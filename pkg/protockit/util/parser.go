@@ -3,6 +3,7 @@ package util
 import (
 	"bytes"
 	"io"
+	"net/url"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -36,4 +37,17 @@ func ParseComment[T any](docs string) (T, error) {
 	err := yaml.Unmarshal(data.Bytes(), &dest)
 
 	return dest, err
+}
+
+func ParseParameter(s string) url.Values {
+	res := url.Values{}
+	for _, item := range strings.Split(s, ",") {
+		kvp := strings.SplitN(item, "=", 2)
+		if len(kvp) != 2 {
+			continue
+		}
+		res.Add(kvp[0], kvp[1])
+	}
+
+	return res
 }

@@ -8,20 +8,25 @@ import (
 	"path/filepath"
 
 	"github.com/airdb/xadmin-api/pkg/protockit"
-	"github.com/airdb/xadmin-api/pkg/protockit/gencode"
+	"github.com/airdb/xadmin-api/pkg/protockit/generror"
 	"github.com/airdb/xadmin-api/pkg/protockit/genextends"
+	"github.com/airdb/xadmin-api/pkg/protockit/util"
 	"github.com/airdb/xadmin-api/pkg/protockit/version"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
 var flagVersion bool
-var flagActions string
+var registedProcessort map[string]util.Processor
 
 func init() {
 	// log.SetFlags(0)
 	log.SetFlags(log.LstdFlags | log.Llongfile)
 	flag.BoolVar(&flagVersion, "version", false, "print plugin version")
-	flag.StringVar(&flagActions, "actions", "tags,code,extends", "the selected actions, options: tags, code, extends")
+
+	registedProcessort = map[string]util.Processor{
+		"error":   generror.Process,
+		"extends": genextends.Process,
+	}
 }
 
 func main() {
@@ -31,6 +36,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	bs := protockit.New(context.Background(), gencode.Process, genextends.Process)
+	bs := protockit.New(context.Background(), registedProcessort)
 	protogen.Options{}.Run(bs.Run)
 }

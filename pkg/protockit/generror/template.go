@@ -1,4 +1,4 @@
-package gencode
+package generror
 
 import (
 	"bytes"

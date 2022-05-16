@@ -11,17 +11,30 @@ import (
 
 type Bootstrap struct {
 	ctx        context.Context
-	processors []util.Processor
+	processors map[string]util.Processor
+	actions    []string
 }
 
-func New(ctx context.Context, processors ...util.Processor) *Bootstrap {
+func New(ctx context.Context, processors map[string]util.Processor) *Bootstrap {
 	return &Bootstrap{
 		ctx:        ctx,
 		processors: processors,
+		actions:    []string{},
 	}
 }
 
 func (bs *Bootstrap) Run(gen *protogen.Plugin) error {
+	params := util.ParseParameter(gen.Request.GetParameter())
+	if _, ok := params["actions"]; ok {
+		bs.actions = params["actions"]
+	}
+	if len(bs.actions) == 0 {
+		for action, _ := range bs.processors {
+			bs.actions = append(bs.actions, action)
+		}
+	}
+	log.Println(bs.actions)
+
 	var files protoregistry.Files
 	for _, file := range gen.Files {
 		if err := files.RegisterFile(file.Desc); err != nil {
@@ -39,19 +52,13 @@ func (bs *Bootstrap) Run(gen *protogen.Plugin) error {
 			continue
 		}
 
-		// gentags.Process(".", file.GeneratedFilenamePrefix)
-
-		// if err := gencode.Process(g, file, &files); err != nil {
-		// 	return err
-		// }
-		// if err := genextends.Process(g, file, &files); err != nil {
-		// 	return err
-		// }
-		for _, processor := range bs.processors {
-			if bs.ctx, err = processor(bs.ctx, file); err != nil {
+		for _, action := range bs.actions {
+			if _, ok := bs.processors[action]; !ok {
+				continue
+			}
+			if bs.ctx, err = bs.processors[action](bs.ctx, file); err != nil {
 				return err
 			}
-
 		}
 	}
 	return nil

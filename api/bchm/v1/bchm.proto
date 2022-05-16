@@ -16,7 +16,9 @@ option java_package = "com.github.airdb.xadmin-api.bchm.v1";
 service BchmService {
   // ListLosts 走失信息 列表.
   //
-  // authz: bchm.lost,*,list
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: *, action: list}
   rpc ListLosts(ListLostsRequest) returns (ListLostsResponse) {
     option (google.api.http) = {
       get : "/v1/bchm/losts"
@@ -25,7 +27,9 @@ service BchmService {
 
   // GetLost 走失信息 详情.
   //
-  // authz: bchm.preset,id,get
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: detail}
   rpc GetLost(GetLostRequest) returns (GetLostResponse) {
     option (google.api.http) = {
       get : "/v1/bchm/lost/{id}"
@@ -34,7 +38,9 @@ service BchmService {
 
   // CreateLost 走失信息 创建.
   //
-  // authz: bchm.lost,*,create
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: *, action: create}
   rpc CreateLost(CreateLostRequest) returns (CreateLostResponse) {
     option (google.api.http) = {
       post : "/v1/bchm/lost"
@@ -44,7 +50,9 @@ service BchmService {
 
   // UpdateLost 走失信息 更新.
   //
-  // authz: bchm.lost,id,update
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: item.id, action: update}
   rpc UpdateLost(UpdateLostRequest) returns (UpdateLostResponse) {
     option (google.api.http) = {
       put : "/v1/bchm/lost/{item.id}"
@@ -54,7 +62,9 @@ service BchmService {
 
   // DeleteLost 走失信息 删除.
   //
-  // authz: bchm.lost,id,get
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: delete}
   rpc DeleteLost(DeleteLostRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete : "/v1/bchm/lost/{id}"
