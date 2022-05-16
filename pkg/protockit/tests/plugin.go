@@ -7,7 +7,7 @@ import (
 )
 
 func NewPlugin(file string) (*protogen.Plugin, error) {
-	set, err := utils.LoadDescriptorSet("../fixtures", "fileset.pb")
+	set, err := utils.LoadDescriptorSet("./fixtures", "fileset.pb")
 	if err != nil {
 		return nil, err
 	}

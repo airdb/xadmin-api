@@ -29,11 +29,10 @@ func (bs *Bootstrap) Run(gen *protogen.Plugin) error {
 		bs.actions = params["actions"]
 	}
 	if len(bs.actions) == 0 {
-		for action, _ := range bs.processors {
+		for action := range bs.processors {
 			bs.actions = append(bs.actions, action)
 		}
 	}
-	log.Println(bs.actions)
 
 	var files protoregistry.Files
 	for _, file := range gen.Files {

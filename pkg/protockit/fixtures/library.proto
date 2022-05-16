@@ -179,7 +179,7 @@ message Shelf {
   // Shelf names have the form `shelves/{shelf_id}`.
   // The name is ignored when creating a shelf.
   string name = 1 [
-    (api.annotation.v1.field_option) = {
+    (annotation.v1.field_option) = {
       actions: ["create", "update"]
     }
   ];
