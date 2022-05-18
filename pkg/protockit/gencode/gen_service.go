@@ -1,10 +1,11 @@
 package gencode
 
 import (
-	"fmt"
+	"path"
 	"strings"
 
 	"github.com/airdb/xadmin-api/pkg/protockit/util"
+	"github.com/gobeam/stringy"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
@@ -28,18 +29,14 @@ func NewServiceGenerator(
 }
 
 func (r *serviceGenerator) Run() error {
-	if r.service.GoName[len(r.service.GoName)-7:] != "Service" {
-		return fmt.Errorf("%s should end with Service", r.service.GoName)
-	}
-
 	r.name = strings.ToLower(r.service.GoName[0 : len(r.service.GoName)-7])
 
 	if len(r.service.Methods) == 0 {
 		return nil
 	}
 
-	filename := r.file.GeneratedFilenamePrefix + `.go`
-
+	filename := path.Join("app", "services",
+		stringy.New(r.name).SnakeCase().LcFirst()+`.go`)
 	g := r.gen.NewGeneratedFile(filename, servicesPackage)
 
 	g.P("package services")
@@ -68,7 +65,7 @@ func (r serviceGenerator) genDeps(g *protogen.GeneratedFile) error {
 	g.P("type ", util.LcFirst(r.service.GoName), "Deps struct {")
 	g.P(fxPackage.Ident("In"))
 	g.P()
-	g.P("Config ", logPackage.Ident("Config"))
+	g.P("Config ", cfgPackage.Ident("Config"))
 	g.P("Logger ", logPackage.Ident("Logger"))
 	g.P("Metrics ", monitorPackage.Ident("Metrics"))
 	g.P("}")

@@ -2,10 +2,12 @@ package gencode
 
 import (
 	"fmt"
+	"path"
 	"regexp"
 	"strings"
 
 	"github.com/airdb/xadmin-api/pkg/protockit/util"
+	"github.com/gobeam/stringy"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
@@ -35,17 +37,14 @@ func NewConverterGenerator(
 }
 
 func (r *converterGenerator) Run() error {
-	if r.service.GoName[len(r.service.GoName)-7:] != "Service" {
-		return fmt.Errorf("%s should end with Service", r.service.GoName)
-	}
-
 	r.name = strings.ToLower(r.service.GoName[0 : len(r.service.GoName)-7])
 
 	if len(r.service.Methods) == 0 {
 		return nil
 	}
 
-	filename := r.file.GeneratedFilenamePrefix + `_converter.go`
+	filename := path.Join("app", "controllers",
+		stringy.New(r.name).SnakeCase().LcFirst()+`_converter.go`)
 
 	g := r.gen.NewGeneratedFile(filename, controllersPackage)
 
@@ -68,7 +67,7 @@ func (r *converterGenerator) Run() error {
 
 func (r converterGenerator) genImpl(g *protogen.GeneratedFile) error {
 	g.P()
-	g.P("type ", util.LcFirst(r.service.GoName), "Converter struct {")
+	g.P("type ", util.LcFirst(r.name), "Convert struct {")
 	g.P("}")
 
 	return nil
@@ -76,10 +75,10 @@ func (r converterGenerator) genImpl(g *protogen.GeneratedFile) error {
 
 func (r converterGenerator) genNew(g *protogen.GeneratedFile) error {
 	g.P()
-	g.P("func new", r.service.GoName, "Converter() ",
-		g.QualifiedGoIdent(r.file.GoImportPath.Ident(r.service.GoName+"Converter")),
+	g.P("func new", util.UcFirst(r.name), "Convert() *",
+		r.name+"Convert",
 		" {")
-	g.P("return &", util.LcFirst(r.service.GoName), "Converter{")
+	g.P("return &", util.LcFirst(r.name), "Convert{")
 	g.P("}")
 	g.P("}")
 
@@ -88,27 +87,31 @@ func (r converterGenerator) genNew(g *protogen.GeneratedFile) error {
 
 func (r converterGenerator) genMethods(g *protogen.GeneratedFile) error {
 	g.P()
+	createMsg := findCreateRequest(r.service)
 	for _, entity := range guessEntity(r.service) {
 		r.genConvertProtoToModel(g, entity)
+		if createMsg != nil {
+			r.genConvertProtoCreateToModel(g, entity, createMsg)
+		}
 	}
 
 	return nil
 }
 
 func (r converterGenerator) genConvertProtoToModel(
-	g *protogen.GeneratedFile, message *protogen.Message,
+	g *protogen.GeneratedFile, entity *protogen.Message,
 ) {
-	protoIdent := g.QualifiedGoIdent(message.GoIdent)
+	protoIdent := g.QualifiedGoIdent(entity.GoIdent)
 	modelIdent := g.QualifiedGoIdent(dataPackage.Ident(
-		message.GoIdent.GoName + "Entity"))
+		entity.GoIdent.GoName + "Entity"))
 
 	pmFunc := fmt.Sprintf("FromProto%sToModel%s",
-		message.GoIdent.GoName, message.GoIdent.GoName)
+		entity.GoIdent.GoName, entity.GoIdent.GoName)
 	pmSign := pmFunc
 	pmSign += "(in *" + protoIdent
 	pmSign += ") *" + modelIdent
 
-	g.P("func (c ", util.LcFirst(r.service.GoName), "Converter) ", pmSign, "{")
+	g.P("func (c ", util.LcFirst(r.name), "Convert) ", pmSign, "{")
 	g.P("if in == nil {")
 	g.P("return nil")
 	g.P("}")
@@ -118,12 +121,12 @@ func (r converterGenerator) genConvertProtoToModel(
 	g.P()
 
 	pmsSign := fmt.Sprintf("FromProto%sToModel%s",
-		util.Pluralize.Plural(message.GoIdent.GoName),
-		util.Pluralize.Plural(message.GoIdent.GoName))
+		util.Pluralize.Plural(entity.GoIdent.GoName),
+		util.Pluralize.Plural(entity.GoIdent.GoName))
 	pmsSign += "(in []*" + protoIdent
 	pmsSign += ") []*" + modelIdent
 
-	g.P("func (c ", util.LcFirst(r.service.GoName), "Converter) ", pmsSign, "{")
+	g.P("func (c ", util.LcFirst(r.name), "Convert) ", pmsSign, "{")
 	g.P("if in == nil || len(in) == 0 {")
 	g.P("return nil")
 	g.P("}")
@@ -138,12 +141,12 @@ func (r converterGenerator) genConvertProtoToModel(
 	g.P()
 
 	mpFunc := fmt.Sprintf("FromModel%sToProto%s",
-		message.GoIdent.GoName, message.GoIdent.GoName)
+		entity.GoIdent.GoName, entity.GoIdent.GoName)
 	mpSign := mpFunc
 	mpSign += "(in *" + modelIdent
 	mpSign += ") *" + protoIdent
 
-	g.P("func (c ", util.LcFirst(r.service.GoName), "Converter) ", mpSign, "{")
+	g.P("func (c ", util.LcFirst(r.name), "Convert) ", mpSign, "{")
 	g.P("if in == nil {")
 	g.P("return nil")
 	g.P("}")
@@ -153,22 +156,45 @@ func (r converterGenerator) genConvertProtoToModel(
 	g.P()
 
 	mpsSign := fmt.Sprintf("FromModel%sToProto%s",
-		util.Pluralize.Plural(message.GoIdent.GoName),
-		util.Pluralize.Plural(message.GoIdent.GoName))
-	mpsSign += "(in []*" + protoIdent
-	mpsSign += ") []*" + modelIdent
+		util.Pluralize.Plural(entity.GoIdent.GoName),
+		util.Pluralize.Plural(entity.GoIdent.GoName))
+	mpsSign += "(in []*" + modelIdent
+	mpsSign += ") []*" + protoIdent
 
-	g.P("func (c ", util.LcFirst(r.service.GoName), "Converter) ", mpsSign, "{")
+	g.P("func (c ", util.LcFirst(r.name), "Convert) ", mpsSign, "{")
 	g.P("if in == nil || len(in) == 0 {")
 	g.P("return nil")
 	g.P("}")
 	g.P("")
-	g.P("res := make([]*", modelIdent, ", len(in))")
+	g.P("res := make([]*", protoIdent, ", len(in))")
 	g.P("for i := 0; i < len(in); i++ {")
 	g.P("res[i] = c.", mpFunc, "(in[i])")
 	g.P("}")
 	g.P("return res")
 	g.P("")
+	g.P("}")
+	g.P()
+}
+
+func (r converterGenerator) genConvertProtoCreateToModel(
+	g *protogen.GeneratedFile, entity *protogen.Message, create *protogen.Message,
+) {
+	modelIdent := g.QualifiedGoIdent(dataPackage.Ident(
+		entity.GoIdent.GoName + "Entity"))
+	createIdent := g.QualifiedGoIdent(create.GoIdent)
+
+	pmCreateFunc := fmt.Sprintf("FromProtoCreate%sToModel%s",
+		entity.GoIdent.GoName, entity.GoIdent.GoName)
+	pmCreateSign := pmCreateFunc
+	pmCreateSign += "(in *" + createIdent
+	pmCreateSign += ") *" + modelIdent
+
+	g.P("func (c ", util.LcFirst(r.name), "Convert) ", pmCreateSign, "{")
+	g.P("if in == nil {")
+	g.P("return nil")
+	g.P("}")
+	g.P("")
+	g.P("return &", modelIdent, "{}")
 	g.P("}")
 	g.P()
 }

@@ -42,7 +42,7 @@ func RangeEnumCodeDescriptorsInFile(
 		option *annov1.ErrorEnumCodeDescriptor,
 		opts map[string]*annov1.ErrorEnumValueDescriptor) bool,
 ) {
-	option, err := util.ParseComment[*annov1.ErrorEnumCodeDescriptor](
+	option, err := util.KitParser[*annov1.ErrorEnumCodeDescriptor](
 		enum.Comments.Leading.String())
 	if err != nil {
 		option = &annov1.ErrorEnumCodeDescriptor{}
@@ -59,7 +59,7 @@ func RangeEnumCodeDescriptorsInFile(
 
 	opts := map[string]*annov1.ErrorEnumValueDescriptor{}
 	for _, value := range enum.Values {
-		opt, err := util.ParseComment[*annov1.ErrorEnumValueDescriptor](
+		opt, err := util.KitParser[*annov1.ErrorEnumValueDescriptor](
 			value.Comments.Leading.String())
 		if err != nil {
 			panic(err)

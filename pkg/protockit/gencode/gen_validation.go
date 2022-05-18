@@ -1,10 +1,11 @@
 package gencode
 
 import (
-	"fmt"
+	"path"
 	"strings"
 
 	"github.com/airdb/xadmin-api/pkg/protockit/util"
+	"github.com/gobeam/stringy"
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
@@ -28,18 +29,14 @@ func NewValidationGenerator(
 }
 
 func (r *validationGenerator) Run() error {
-	if r.service.GoName[len(r.service.GoName)-7:] != "Service" {
-		return fmt.Errorf("%s should end with Service", r.service.GoName)
-	}
-
 	r.name = strings.ToLower(r.service.GoName[0 : len(r.service.GoName)-7])
 
 	if len(r.service.Methods) == 0 {
 		return nil
 	}
 
-	filename := r.file.GeneratedFilenamePrefix + `.go`
-
+	filename := path.Join("app", "validations",
+		stringy.New(r.name).SnakeCase().LcFirst()+`.go`)
 	g := r.gen.NewGeneratedFile(filename, validationsPackage)
 
 	g.P("package validations")
@@ -65,9 +62,9 @@ func (r *validationGenerator) Run() error {
 
 func (r validationGenerator) genInterface(g *protogen.GeneratedFile) error {
 	g.P()
-	g.P("type ", util.LcFirst(r.service.GoName), "Validations interface {")
+	g.P("type ", util.UcFirst(r.service.GoName), "Validations interface {")
 	for _, method := range r.service.Methods {
-		g.P(method.GoName, validationMethodSignature(g, method))
+		g.P(validationMethodSignature(g, method))
 	}
 	g.P("}")
 
@@ -84,8 +81,8 @@ func (r validationGenerator) genImpl(g *protogen.GeneratedFile) error {
 
 func (r validationGenerator) genNew(g *protogen.GeneratedFile) error {
 	g.P()
-	g.P("func Create", r.service.GoName, "Validations() ",
-		g.QualifiedGoIdent(r.file.GoImportPath.Ident(r.service.GoName+"Validations")),
+	g.P("func New", r.service.GoName, "Validations() ",
+		r.service.GoName+"Validations",
 		" {")
 	g.P("return new(", util.LcFirst(r.service.GoName), "Validations)")
 	g.P("}")

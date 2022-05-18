@@ -24,6 +24,10 @@ option java_package = "com.github.airdb.xadmin-api.fixtures";
 //
 // - Each Shelf has a collection of [Book][google.example.library.v1.Book]
 //   resources, named `shelves/*/books/*`
+//
+// @Kit
+//  gencode:
+//    layers: ["*"]
 service LibraryService {
   option (google.api.default_host) = "library-example.googleapis.com";
 

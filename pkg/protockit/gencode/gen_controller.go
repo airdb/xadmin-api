@@ -2,9 +2,11 @@ package gencode
 
 import (
 	"fmt"
+	"path"
 	"strings"
 
 	"github.com/airdb/xadmin-api/pkg/protockit/util"
+	"github.com/gobeam/stringy"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -40,11 +42,12 @@ func (r *controllerGenerator) Run() error {
 		return nil
 	}
 
-	filename := r.file.GeneratedFilenamePrefix + `.go`
+	filename := path.Join("app", "controllers",
+		stringy.New(r.name).SnakeCase().LcFirst()+`.go`)
 
 	g := r.gen.NewGeneratedFile(filename, controllersPackage)
 
-	g.P("package controller")
+	g.P("package controllers")
 
 	if err := r.genInterface(g); err != nil {
 		return err
@@ -95,7 +98,7 @@ func (r controllerGenerator) genDeps(g *protogen.GeneratedFile) error {
 	g.P("type ", util.LcFirst(r.service.GoName), "ControllerDeps struct {")
 	g.P(fxPackage.Ident("In"))
 	g.P()
-	g.P("Config ", logPackage.Ident("Config"))
+	g.P("Config ", cfgPackage.Ident("Config"))
 	g.P("Logger ", logPackage.Ident("Logger"))
 	g.P("Metrics ", monitorPackage.Ident("Metrics"))
 	g.P()
@@ -113,9 +116,9 @@ func (r controllerGenerator) genImpl(g *protogen.GeneratedFile) error {
 	g.P(g.QualifiedGoIdent(
 		r.file.GoImportPath.Ident("Unimplemented" + r.service.GoName + "Server")))
 	g.P()
-	g.P("deps ", util.LcFirst(r.service.GoName)+"Deps")
+	g.P("deps ", util.LcFirst(r.service.GoName)+"ControllerDeps")
 	g.P("log ", logPackage.Ident("Fields"))
-	g.P("conver *", r.name+"Convert")
+	g.P("convert *", r.name+"Convert")
 	g.P("}")
 
 	return nil
@@ -123,13 +126,14 @@ func (r controllerGenerator) genImpl(g *protogen.GeneratedFile) error {
 
 func (r controllerGenerator) genNew(g *protogen.GeneratedFile) error {
 	g.P()
-	g.P("func Create", r.service.GoName, "Controller() ",
-		g.QualifiedGoIdent(r.file.GoImportPath.Ident(r.service.GoName+"Controller")),
+	g.P("func New", r.service.GoName, "Controller(deps ",
+		util.LcFirst(r.service.GoName), "ControllerDeps) ",
+		r.service.GoName+"Controller",
 		" {")
 	g.P("return &", util.LcFirst(r.service.GoName), "Controller{")
 	g.P("deps: deps,")
 	g.P(`log: deps.Logger.WithField("service", "`, r.name, `"),`)
-	g.P(`conver: new`, util.UcFirst(r.name), "Convert(),")
+	g.P(`convert: new`, util.UcFirst(r.name), "Convert(),")
 	g.P("}")
 	g.P("}")
 
@@ -252,9 +256,9 @@ func (r controllerGenerator) genServiceMethodCreate(g *protogen.GeneratedFile, m
 		methodSignature(g, method), "{")
 	g.P(`c.log.Debug(ctx, "`, method.GoName, ` accepted")`)
 	g.P()
-	entityName := util.Pluralize.Plural(entityStr)
-	convertFuncName := fmt.Sprintf("FromModel%sToProto%s", entityName, entityName)
-	g.P("item := c.conver.", convertFuncName, "(in)")
+	entityName := util.Pluralize.Singular(entityStr)
+	convertFuncName := fmt.Sprintf("FromProtoCreate%sToModel%s", entityName, entityName)
+	g.P("item := c.convert.", convertFuncName, "(in)")
 	g.P("err := c.deps.", repoStr, ".Create(ctx, item)")
 	g.P("if err != nil {")
 	errorListStr := `"` + method.GoName + ` error"`
@@ -277,12 +281,12 @@ func (r controllerGenerator) genServiceMethodUpdate(g *protogen.GeneratedFile, m
 		methodSignature(g, method), "{")
 	g.P(`c.log.Debug(ctx, "`, method.GoName, ` accepted")`)
 	g.P()
-	entityName := util.Pluralize.Plural(entityStr)
+	entityName := util.Pluralize.Singular(entityStr)
 	convertFuncName := fmt.Sprintf("FromProto%sToModel%s", entityName, entityName)
-	g.P("data := c.conver.", convertFuncName, "(in.GetItem)")
+	g.P("data := c.convert.", convertFuncName, "(in.GetItem())")
 	g.P()
 	g.P("fm := ", queryKitPackage.Ident("NewField"),
-		`(in.GetUpdateMask, in.GetItem().WithAction("update"))`)
+		`(in.GetUpdateMask(), in.GetItem()).WithAction("update")`)
 	g.P()
 	g.P("err := c.deps.", repoStr, ".Update(ctx, data.ID, data, fm)")
 	g.P("if err != nil {")
@@ -291,7 +295,7 @@ func (r controllerGenerator) genServiceMethodUpdate(g *protogen.GeneratedFile, m
 	g.P("return nil, ", errorsPackage.Ident("New"), "(", errorStr, ")")
 	g.P("}")
 	g.P("")
-	g.P("item, err := c.deps.", repoStr, ".Get(ctx, uint(in.GetId()))")
+	g.P("item, err := c.deps.", repoStr, ".Get(ctx, uint(data.ID))")
 	g.P("if err != nil {")
 	errorStr = `"` + method.GoName + ` item not exist"`
 	g.P("c.log.WithError(err).Debug(ctx, ", errorStr, ")")
@@ -355,6 +359,11 @@ func (r controllerGenerator) genOut(g *protogen.GeneratedFile, msg *protogen.Mes
 				g.P(field.GoName, ": filtered,")
 				continue
 			}
+		} else if field.Desc.Kind() == protoreflect.MessageKind {
+			entityName := util.Pluralize.Singular(field.Message.GoIdent.GoName)
+			convertFuncName := fmt.Sprintf("FromModel%sToProto%s", entityName, entityName)
+			g.P(field.GoName, ": c.convert.", convertFuncName, "(item),")
+			continue
 		}
 	}
 	g.P("}, nil")

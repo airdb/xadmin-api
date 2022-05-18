@@ -2,11 +2,15 @@ package gencode
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
+	annov1 "github.com/airdb/xadmin-api/genproto/annotation/v1"
+	"github.com/airdb/xadmin-api/pkg/protockit/util"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 const (
@@ -21,11 +25,11 @@ const (
 var (
 	repoPackage        protogen.GoImportPath
 	repoKitPackage     protogen.GoImportPath
+	queryKitPackage    protogen.GoImportPath
 	dataPackage        protogen.GoImportPath
 	validationsPackage protogen.GoImportPath
 	controllersPackage protogen.GoImportPath
 	servicesPackage    protogen.GoImportPath
-	queryKitPackage    protogen.GoImportPath
 )
 
 var (
@@ -35,6 +39,20 @@ var (
 	)
 	reInOut = regexp.MustCompile(`^([A-Z].*)(Request|Response)$`)
 )
+
+func guessGoimportPath(s string, dirs ...string) protogen.GoImportPath {
+	segs := []string{}
+	for _, seg := range strings.Split(strings.Trim(s, "\""), "/") {
+		if seg == "genproto" {
+			break
+		}
+		segs = append(segs, seg)
+	}
+
+	segs = append(segs, dirs...)
+
+	return protogen.GoImportPath(strings.Join(segs, "/"))
+}
 
 func methodSignature(g *protogen.GeneratedFile, method *protogen.Method) string {
 	s := method.GoName + "(ctx " + g.QualifiedGoIdent(contextPackage.Ident("Context"))
@@ -52,19 +70,55 @@ func validationMethodSignature(g *protogen.GeneratedFile, method *protogen.Metho
 	return s
 }
 
-func guessEntity(service *protogen.Service) map[string]*protogen.Message {
-	entities := map[string]*protogen.Message{}
+func guessEntity(service *protogen.Service) []*protogen.Message {
+	entities := []*protogen.Message{}
 	for _, method := range service.Methods {
-		ret := reMethod.FindStringSubmatch(method.GoName)
-		if ret == nil || len(ret) < 1 {
+		retMethod := reMethod.FindStringSubmatch(method.GoName)
+		if retMethod == nil || len(retMethod) < 1 {
 			continue
 		}
-		if !lo.Contains([]string{"Get"}, ret[1]) {
+		if !lo.Contains([]string{"Get"}, retMethod[1]) {
 			continue
 		}
 
-		entities[method.Output.GoIdent.GoName] = method.Output
+		retOutput := reInOut.FindStringSubmatch(method.Output.GoIdent.GoName)
+		if retOutput == nil {
+			entities = append(entities, method.Output)
+			continue
+		}
+		if len(retOutput) != 3 {
+			continue
+		}
+		for _, field := range method.Output.Fields {
+			option, err := util.KitParser[annov1.FieldDescriptor](
+				service.Comments.Leading.String())
+			if err != nil {
+				log.Printf("can not parse %s kit option: (%s)", service.GoName, err)
+			}
+			if util.KitGencodeLayerEmpty(&option) {
+				continue
+			}
+			if field.Desc.Kind() == protoreflect.MessageKind {
+				entities = append(entities, field.Message)
+			}
+		}
 	}
 
 	return entities
+}
+
+func findCreateRequest(service *protogen.Service) *protogen.Message {
+	for _, method := range service.Methods {
+		retMethod := reMethod.FindStringSubmatch(method.GoName)
+		if retMethod == nil || len(retMethod) < 1 {
+			continue
+		}
+		if !lo.Contains([]string{"Create"}, retMethod[1]) {
+			continue
+		}
+
+		return method.Input
+	}
+
+	return nil
 }
