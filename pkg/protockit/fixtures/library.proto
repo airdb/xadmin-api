@@ -153,7 +153,11 @@ message Book {
   //    - update
   //  tags:
   //    yaml: name
-  string name = 1;
+  string name = 1 [
+    (annotation.v1.field_option) = {
+      actions: ["create", "update"],
+    }
+  ];
 
   // The name of the book author
   //
