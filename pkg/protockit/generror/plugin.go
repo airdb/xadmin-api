@@ -47,7 +47,7 @@ func RangeEnumCodeDescriptorsInFile(
 	if err != nil {
 		option = &annov1.ErrorEnumCodeDescriptor{}
 	}
-	if option.Category != "error" {
+	if err != nil || option == nil || option.Category != "error" {
 		return
 	}
 	if option.DefaultHttpCode == 0 {
