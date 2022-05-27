@@ -4,12 +4,12 @@
 # https://github.com/serverless/serverless-tencent/blob/master/docs/basic/variables.md
 #
 #应用组织信息
-app: 'airdb' # 应用名称。留空则默认取当前组件的实例名称为app名称。
+app: 'xadmin' # 应用名称。留空则默认取当前组件的实例名称为app名称。
 #stage: 'test' # 环境名称。默认值是 dev。建议使用${env:STAGE}变量定义环境名称
 stage: ${env:STAGE} # 环境名称。默认值是 dev。建议使用${env:STAGE}变量定义环境名称
 
 component: scf
-name: xadmin
+name: api
 
 inputs:
   src:
@@ -44,7 +44,7 @@ inputs:
             - https
           environment: ${stage}
           endpoints:
-            - path: /${name}
+            - path: /
               apiName: ${name}
               method: ANY
               enableCORS: true

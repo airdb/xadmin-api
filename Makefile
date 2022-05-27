@@ -16,15 +16,18 @@ run: buf
 		config config/config.yml
 
 dev-local: buf
-	@CGO_ENABLED=1 go run $(LDFLAGS) -o output/main cmd/api-server/main.go \
+	@go run $(LDFLAGS) -o output/main cmd/api-server/main.go \
 		config config/config.yml \
 		--additional-files config/config_local.yml
 
 build: buf
-	CGO_ENABLED=1 go build $(LDFLAGS) -o output/main cmd/api-server/main.go
+	go build $(LDFLAGS) -o output/main cmd/api-server/main.go
 
 scf-build:
-	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o output/main cmd/api-scf/main.go
+	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o main cmd/api-scf/main.go
+
+scf-deploy:
+	sls deploy
 
 format:
 	go fmt ./...

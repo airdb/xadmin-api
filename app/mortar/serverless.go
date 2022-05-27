@@ -10,14 +10,11 @@ import (
 	"github.com/go-masonry/mortar/constructors/partial"
 	serverInt "github.com/go-masonry/mortar/interfaces/http/server"
 	"github.com/go-masonry/mortar/interfaces/log"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	chiadapter "github.com/serverless-plus/tencent-serverless-go/chi"
 	"github.com/serverless-plus/tencent-serverless-go/events"
 	"github.com/serverless-plus/tencent-serverless-go/faas"
 	"go.uber.org/fx"
 )
-
-const scfAppName = "xadmin"
 
 func BuildServerlessFxOption() fx.Option {
 	return fx.Options(
@@ -28,12 +25,12 @@ func BuildServerlessFxOption() fx.Option {
 		// 		return s.BuilderCallback()
 		// 	},
 		// }),
-		// fx.Provide(fx.Annotated{
-		// 	Group: partial.FxGroupExternalBuilderCallbacks,
-		// 	Target: func(s *Serverless) partial.RESTBuilderCallback {
-		// 		return s.ExternalBuilderCallback()
-		// 	},
-		// }),
+		fx.Provide(fx.Annotated{
+			Group: partial.FxGroupExternalBuilderCallbacks,
+			Target: func(s *Serverless) partial.RESTBuilderCallback {
+				return s.ExternalBuilderCallback()
+			},
+		}),
 		// fx.Provide(fx.Annotated{
 		// 	Group: partial.FxGroupInternalBuilderCallbacks,
 		// 	Target: func(s *Serverless) partial.RESTBuilderCallback {
@@ -72,21 +69,20 @@ func InvokeWebServerlessFxOption() fx.Option {
 }
 
 type Serverless struct {
-	webMux  *http.ServeMux
-	grpcMux *runtime.ServeMux
-	chiFaas *chiadapter.ChiFaas
+	externalMux *http.ServeMux
+	chiFaas     *chiadapter.ChiFaas
 }
 
 func NewServerless() *Serverless {
 	return &Serverless{
-		webMux:  http.NewServeMux(),
-		grpcMux: runtime.NewServeMux(),
+		externalMux: http.NewServeMux(),
 	}
 }
 
 func (s *Serverless) initAdapter() {
 	r := chi.NewRouter()
-	r.Route("/"+scfAppName, func(r chi.Router) {
+	r.Mount("/", s.externalMux)
+	r.Route("/debug", func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(200)
@@ -106,7 +102,7 @@ func (s *Serverless) scfHandler(ctx context.Context, req events.APIGatewayReques
 	return s.chiFaas.ProxyWithContext(ctx, req)
 }
 
-func (s Serverless) BuilderCallback() partial.BuilderCallback {
+func (s *Serverless) BuilderCallback() partial.BuilderCallback {
 	return func(builder serverInt.GRPCWebServiceBuilder) serverInt.GRPCWebServiceBuilder {
 		ln, err := s.listen("./output/grpc.socket")
 		if err != nil {
@@ -116,17 +112,20 @@ func (s Serverless) BuilderCallback() partial.BuilderCallback {
 	}
 }
 
-func (s Serverless) ExternalBuilderCallback() partial.RESTBuilderCallback {
+func (s *Serverless) ExternalBuilderCallback() partial.RESTBuilderCallback {
 	return func(builder serverInt.RESTBuilder) serverInt.RESTBuilder {
-		ln, err := s.listen("./output/external.socket")
-		if err != nil {
-			panic(err)
-		}
-		return builder.SetCustomListener(ln)
+		// ln, err := s.listen("./output/external.socket")
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// return builder.SetCustomListener(ln)
+		return builder.SetCustomServer(&http.Server{
+			Handler: s.externalMux,
+		})
 	}
 }
 
-func (s Serverless) InternalBuilderCallback() partial.RESTBuilderCallback {
+func (s *Serverless) InternalBuilderCallback() partial.RESTBuilderCallback {
 	return func(builder serverInt.RESTBuilder) serverInt.RESTBuilder {
 		ln, err := s.listen("./output/internal.socket")
 		if err != nil {
@@ -136,7 +135,7 @@ func (s Serverless) InternalBuilderCallback() partial.RESTBuilderCallback {
 	}
 }
 
-func (s Serverless) listen(name string) (net.Listener, error) {
+func (s *Serverless) listen(name string) (net.Listener, error) {
 	ln, err := net.Listen("unix", name)
 	if err != nil {
 		return nil, err
