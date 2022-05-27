@@ -9,7 +9,7 @@ jobs:
       matrix:
         node-version: ["16.x"]
         pnpm-version: ["6.0.2"]
-        go-version: ["1.18"]
+        go-version: ["1.18.2"]
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
@@ -24,7 +24,12 @@ jobs:
       - name: Use Golang ${{ matrix.go-version }}
         uses: actions/setup-go@v3
         with:
-          go-version: ${{ matrix.go }}
+          go-version: ${{ matrix.go-version }}
+
+      - name: Use Buf
+        uses: bufbuild/buf-setup-action@v1.4.0
+      - name: Use Buf Lint
+        uses: bufbuild/buf-lint-action@v1
 
       - name: Setup pnpm cache
         uses: actions/cache@v3
@@ -51,14 +56,12 @@ jobs:
       - name: Check Go Version
         run: go version
 
-      - name: Make plugins
-        run: make plugins
-
-      - name: Make buf
-        run: make plugins
-
-      - name: Make scf-build
-        run: make scf-build
+      - name: Make prepare
+        run: |
+          export PATH="$PATH:$(go env GOPATH)/bin"
+          make plugins
+          make buf
+          make scf-build
 
       - name: Make and deploy
         run: make
