@@ -2,9 +2,12 @@ module github.com/airdb/xadmin-api
 
 go 1.18
 
+replace github.com/go-masonry/mortar => ../../xqbumu/mortar
+
 require (
 	github.com/alecthomas/kong v0.5.0
 	github.com/casdoor/casdoor-go-sdk v0.4.1
+	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-masonry/bjaeger v1.0.12
 	github.com/go-masonry/bprometheus v1.0.12
 	github.com/go-masonry/bviper v1.0.12
@@ -18,6 +21,7 @@ require (
 	github.com/pseudomuto/protokit v0.2.1
 	github.com/rs/cors v1.8.2
 	github.com/samber/lo v1.21.0
+	github.com/serverless-plus/tencent-serverless-go v1.0.1
 	github.com/stretchr/testify v1.7.1
 	go.uber.org/fx v1.17.1
 	golang.org/x/text v0.3.7
@@ -41,7 +45,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
-	github.com/mattn/go-sqlite3 v1.14.13 // indirect
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.0-beta.8 // indirect

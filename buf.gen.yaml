@@ -42,8 +42,10 @@ plugins:
       - generate_unbound_methods=true
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
   - name: openapiv2
-    out: genproto
+    out: ./output
+    strategy: all
     opt:
       - allow_repeated_fields_in_body=true
-      - use_go_templates=true
+      - output_format=yaml
+      - allow_merge=true,merge_file_name=apis
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
