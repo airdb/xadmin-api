@@ -61,15 +61,19 @@ jobs:
           export PATH="$PATH:$(go env GOPATH)/bin"
           make plugins
           make buf
-          make scf-build
 
-      - name: Make and deploy
-        run: make
-        env:
-          TENCENT_APP_ID: ${{ secrets.TENCENT_APP_ID }}
-          TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
-          TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
-          TENCENT_TOKEN: ${{ secrets.TENCENT_TOKEN }}
-          STAGE: ${{ secrets.STAGE }}
-          SCF_NAMESPACE: ${{ secrets.SCF_NAMESPACE }}
-          SERVERLESS_PLATFORM_VENDOR: ${{ secrets.SERVERLESS_PLATFORM_VENDOR }}
+      # - name: Make build
+      #   run: |
+      #     export PATH="$PATH:$(go env GOPATH)/bin"
+      #     make scf-build
+
+      # - name: Make and deploy
+      #   run: make
+      #   env:
+      #     TENCENT_APP_ID: ${{ secrets.TENCENT_APP_ID }}
+      #     TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
+      #     TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
+      #     TENCENT_TOKEN: ${{ secrets.TENCENT_TOKEN }}
+      #     STAGE: ${{ secrets.STAGE }}
+      #     SCF_NAMESPACE: ${{ secrets.SCF_NAMESPACE }}
+      #     SERVERLESS_PLATFORM_VENDOR: ${{ secrets.SERVERLESS_PLATFORM_VENDOR }}
