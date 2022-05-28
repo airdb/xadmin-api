@@ -103,6 +103,52 @@ func (c *teamworkInfoController) ListTaskByProject(ctx context.Context, request 
 					},
 				},
 			},
+			{
+				Id:               2,
+				ProjectName:      "sso + xadmin ",
+				ProjectMilestone: "phase 1: sso 成功部署 \n phase 2: xadmin 开发框架 \n Phase 3: 前后端集成",
+				ProjectStatus:    "进行中",
+				TaskProcess: []*teamworkv1.TaskProcess{
+					{
+						Email:    "bumu@airdb.net",
+						ThisWeek: "框架基本完成",
+						NextWeek: "代码合并",
+					},
+					{
+						Email:    "xiaoqiang",
+						ThisWeek: "修复部分bug",
+						NextWeek: "优化",
+					},
+					{
+						Email:    "zhiye",
+						ThisWeek: "开发环境搭建",
+						NextWeek: "功能集成",
+					},
+				},
+			},
+			{
+				Id:               3,
+				ProjectName:      "论坛迁移",
+				ProjectMilestone: "phase 1: CDN 迁移 \n phase 2: 用户迁移 \n Phase 3: 论坛前端开发",
+				ProjectStatus:    "进行中",
+				TaskProcess: []*teamworkv1.TaskProcess{
+					{
+						Email:    "bumu@airdb.net",
+						ThisWeek: "sso 迁移代码优化",
+						NextWeek: "sso 迁移代码优化",
+					},
+					{
+						Email:    "serven",
+						ThisWeek: "未开始",
+						NextWeek: "cdn部署",
+					},
+					{
+						Email:    "lingling",
+						ThisWeek: "未开始",
+						NextWeek: "论坛前端开发",
+					},
+				},
+			},
 		},
 	}, nil
 }
