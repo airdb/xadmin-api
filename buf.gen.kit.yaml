@@ -18,3 +18,9 @@ plugins:
       - actions=extends
       - paths=source_relative
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
+  # - name: kit
+  #   out: output
+  #   opt:
+  #     - actions=code
+  #     - paths=source_relative
+  #     - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1

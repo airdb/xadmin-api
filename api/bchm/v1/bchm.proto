@@ -13,6 +13,10 @@ option java_outer_classname = "BchmProto";
 option java_package = "com.github.airdb.xadmin-api.bchm.v1";
 
 // 宝贝回家 业务
+//
+// @Kit
+//  gencode:
+//    layers: ["*"]
 service BchmService {
   // ListLosts 走失信息 列表.
   //

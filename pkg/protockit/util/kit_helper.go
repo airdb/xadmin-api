@@ -6,12 +6,18 @@ import (
 	"net/url"
 	"strings"
 
+	annov1 "github.com/airdb/xadmin-api/genproto/annotation/v1"
+	"github.com/samber/lo"
 	"gopkg.in/yaml.v3"
 )
 
 const beginSymbol = `@Kit`
 
-func ParseComment[T any](docs string) (T, error) {
+type GetGencodeInterface interface {
+	GetGencode() *annov1.GencodeOption
+}
+
+func KitParser[T any](docs string) (T, error) {
 	var stared bool
 	buf := bytes.NewBufferString(docs)
 	data := bytes.NewBuffer(nil)
@@ -37,6 +43,19 @@ func ParseComment[T any](docs string) (T, error) {
 	err := yaml.Unmarshal(data.Bytes(), &dest)
 
 	return dest, err
+}
+
+func KitGencodeValid(message GetGencodeInterface) bool {
+	return message.GetGencode() != nil && message.GetGencode().Layers != nil
+}
+
+func KitGencodeLayerEmpty(message GetGencodeInterface) bool {
+	return KitGencodeValid(message) && len(message.GetGencode().Layers) == 0
+}
+
+func KitGencodeLayerValid(message GetGencodeInterface, layers ...string) bool {
+	return KitGencodeValid(message) &&
+		len(lo.Intersect(message.GetGencode().Layers, layers)) > 0
 }
 
 func ParseParameter(s string) url.Values {

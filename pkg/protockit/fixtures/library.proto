@@ -24,6 +24,10 @@ option java_package = "com.github.airdb.xadmin-api.fixtures";
 //
 // - Each Shelf has a collection of [Book][google.example.library.v1.Book]
 //   resources, named `shelves/*/books/*`
+//
+// @Kit
+//  gencode:
+//    layers: ["*"]
 service LibraryService {
   option (google.api.default_host) = "library-example.googleapis.com";
 
@@ -153,7 +157,11 @@ message Book {
   //    - update
   //  tags:
   //    yaml: name
-  string name = 1;
+  string name = 1 [
+    (annotation.v1.field_option) = {
+      actions: ["create", "update"],
+    }
+  ];
 
   // The name of the book author
   //

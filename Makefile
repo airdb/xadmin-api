@@ -3,22 +3,31 @@ GIT:='github.com/go-masonry/mortar/mortar.gitCommit=$(shell git rev-parse --shor
 BUILD_TAG:='github.com/go-masonry/mortar/mortar.buildTag=42'
 BUILD_TS:='github.com/go-masonry/mortar/mortar.buildTimestamp=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")'
 
+LDFLAGS=-ldflags
+LDFLAGS+="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}"
+
 export JAEGER_AGENT_HOST = localhost
 export JAEGER_AGENT_PORT = 6831
 export JAEGER_SAMPLER_TYPE = const
 export JAEGER_SAMPLER_PARAM = 1
 
 run: buf
-	@go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go \
+	@go run $(LDFLAGS) -o output/main cmd/api-server/main.go \
 		config config/config.yml
 
 dev-local: buf
-	@CGO_ENABLED=1 go run -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go \
+	@go run $(LDFLAGS) -o output/main cmd/api-server/main.go \
 		config config/config.yml \
 		--additional-files config/config_local.yml
 
 build: buf
-	@CGO_ENABLED=1 go build -ldflags="-X ${VER} -X ${GIT} -X ${BUILD_TAG} -X ${BUILD_TS}" main.go
+	go build $(LDFLAGS) -o output/main cmd/api-server/main.go
+
+scf-build:
+	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o main cmd/api-scf/main.go
+
+scf-deploy:
+	sls deploy
 
 format:
 	go fmt ./...

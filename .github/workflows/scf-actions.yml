@@ -1,0 +1,79 @@
+name: Scf Actions
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: development
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        node-version: ["16.x"]
+        pnpm-version: ["6.0.2"]
+        go-version: ["1.18.2"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Use pnpm ${{ matrix.pnpm-version }}
+        uses: pnpm/action-setup@v2.1.0
+        with:
+          version: ${{ matrix.pnpm-version }}
+          run_install: false
+      - name: Use Golang ${{ matrix.go-version }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Use Buf
+        uses: bufbuild/buf-setup-action@v1.4.0
+      - name: Use Buf Lint
+        uses: bufbuild/buf-lint-action@v1
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/serverless.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Stepup go cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        run: pnpm install --global serverless serverless-tencent
+
+      - name: Check Go Version
+        run: go version
+
+      - name: Make prepare
+        run: |
+          export PATH="$PATH:$(go env GOPATH)/bin"
+          make plugins
+          make buf
+
+      # - name: Make build
+      #   run: |
+      #     export PATH="$PATH:$(go env GOPATH)/bin"
+      #     make scf-build
+
+      # - name: Make and deploy
+      #   run: make
+      #   env:
+      #     TENCENT_APP_ID: ${{ secrets.TENCENT_APP_ID }}
+      #     TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
+      #     TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
+      #     TENCENT_TOKEN: ${{ secrets.TENCENT_TOKEN }}
+      #     STAGE: ${{ secrets.STAGE }}
+      #     SCF_NAMESPACE: ${{ secrets.SCF_NAMESPACE }}
+      #     SERVERLESS_PLATFORM_VENDOR: ${{ secrets.SERVERLESS_PLATFORM_VENDOR }}

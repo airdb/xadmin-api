@@ -180,7 +180,7 @@ func (v visitor) Visit(node ast.Node) ast.Visitor {
 		})
 
 		// parse comment
-		opt, err := util.ParseComment[*annov1.FieldDescriptor](docs.String())
+		opt, err := util.KitParser[*annov1.FieldDescriptor](docs.String())
 		if err != nil {
 			break
 		}

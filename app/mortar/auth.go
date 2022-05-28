@@ -86,11 +86,13 @@ func (interceptor *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 		claims, err := auth.ParseJwtToken(token)
 		if err != nil {
 			interceptor.log.WithError(err).Debug(ctx, "parse oauth token")
+			return handler(ctx, req)
 		}
 
 		user, err := auth.GetUser(claims.User.Name)
 		if err != nil {
 			interceptor.log.WithError(err).Debug(ctx, "get oauth user error")
+			return handler(ctx, req)
 		}
 
 		return handler(authkit.NewContextUser(ctx, user), req)

@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/airdb/xadmin-api/pkg/protockit"
+	"github.com/airdb/xadmin-api/pkg/protockit/gencode"
 	"github.com/airdb/xadmin-api/pkg/protockit/generror"
 	"github.com/airdb/xadmin-api/pkg/protockit/genextends"
 	"github.com/airdb/xadmin-api/pkg/protockit/util"
@@ -26,6 +27,7 @@ func init() {
 	registedProcessort = map[string]util.Processor{
 		"error":   generror.Process,
 		"extends": genextends.Process,
+		"code":    gencode.Process,
 	}
 }
 

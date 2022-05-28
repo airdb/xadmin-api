@@ -40,7 +40,7 @@ func RangeFieldDescriptorsInMessage(
 		return
 	}
 
-	option, err := util.ParseComment[*annov1.MessageDescriptor](
+	option, err := util.KitParser[*annov1.MessageDescriptor](
 		message.Comments.Leading.String())
 	if err != nil || option == nil {
 		option = &annov1.MessageDescriptor{}
@@ -51,7 +51,7 @@ func RangeFieldDescriptorsInMessage(
 
 	opts := map[string]*annov1.FieldDescriptor{}
 	for _, field := range message.Fields {
-		opt, err := util.ParseComment[*annov1.FieldDescriptor](
+		opt, err := util.KitParser[*annov1.FieldDescriptor](
 			field.Comments.Leading.String())
 		if err != nil || opt == nil {
 			opt = &annov1.FieldDescriptor{}

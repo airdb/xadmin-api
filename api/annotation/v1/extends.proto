@@ -41,6 +41,10 @@ extend google.protobuf.MethodOptions {
   optional bool method_option = 50007;
 }
 
+message GencodeOption {
+  repeated string layers = 2;
+}
+
 // The message descriptor.
 message MessageDescriptor {
   // The the FieldMask paths mapping.
@@ -48,6 +52,8 @@ message MessageDescriptor {
 
   // The default feild actions when message's field action is empty.
   repeated string default_field_actions = 2;
+
+  GencodeOption gencode = 3;
 }
 
 // The resource field descriptor.
@@ -61,6 +67,8 @@ message FieldDescriptor {
   // The the field tags.
   // Append extra tags on filed, default add yaml with camlecase.
   map<string, string> tags = 2;
+
+  GencodeOption gencode = 3;
 }
 
 message ResourceDescriptor {

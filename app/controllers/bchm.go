@@ -20,9 +20,8 @@ type BchmServiceController interface {
 type bchmInfoControllerDeps struct {
 	fx.In
 
-	DB       data.LostRepo
-	LostRepo data.LostRepo
 	Logger   log.Logger
+	LostRepo data.LostRepo
 }
 
 type bchmInfoController struct {

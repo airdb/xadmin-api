@@ -16,6 +16,12 @@ type lostRepoDeps struct {
 	fx.In
 }
 
+type lostRepo struct {
+	*repokit.Repo[LostEntity, uint, bchmv1.ListLostsRequest]
+
+	deps lostRepoDeps
+}
+
 func NewLostRepo(deps lostRepoDeps) LostRepo {
 	repo := &lostRepo{
 		deps: deps,
@@ -23,10 +29,4 @@ func NewLostRepo(deps lostRepoDeps) LostRepo {
 	repo.Repo = repokit.NewRepo[LostEntity, uint, bchmv1.ListLostsRequest](repo)
 
 	return repo
-}
-
-type lostRepo struct {
-	*repokit.Repo[LostEntity, uint, bchmv1.ListLostsRequest]
-
-	deps lostRepoDeps
 }
