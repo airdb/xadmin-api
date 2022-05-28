@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package errorCollection.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/errorCollection/v1;errorCollectionv1";
+option java_multiple_files = true;
+option java_outer_classname = "ErrorCollectionProto";
+option java_package = "com.github.airdb.xadmin-api.errorCollection.v1";
+
+// ErrorCollection
+service ErrorCollectionService {
+  rpc CreateErrorCollection(CreateErrorCollectionRequest) returns (CreateErrorCollectionResponse) {
+    option (google.api.http) = {
+      post: "/v1/errorCollection/create"
+      body: "*"
+    };
+  }
+
+  rpc ListErrorCollection(CreateErrorCollectionRequest) returns (CreateErrorCollectionResponse) {
+    option (google.api.http) = {
+      get: "/v1/errorCollection/list"
+    };
+  }
+}
+
+// Entity 条目
+message Entity {
+  // @Kit
+  //  actions: [create]
+  int32 id = 1;
+
+  // @Kit
+  //  actions: [create, update]
+  string name = 2;
+}
+
+message ListErrorCollectionRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+}
+
+message ListErrorCollectionResponse {
+  int32 total_count = 2;
+}
+
+message CreateErrorCollectionRequest {
+  int32 id = 1;
+}
+
+message CreateErrorCollectionResponse {
+  int32 id = 1;
+}

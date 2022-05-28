@@ -16,7 +16,7 @@ run: buf
 		config config/config.yml
 
 dev-local: buf
-	@go run $(LDFLAGS) -o output/main cmd/api-server/main.go \
+	go run $(LDFLAGS) cmd/api-server/main.go \
 		config config/config.yml \
 		--additional-files config/config_local.yml
 

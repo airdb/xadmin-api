@@ -8,6 +8,7 @@ import (
 	"github.com/airdb/xadmin-api/app/services"
 	"github.com/airdb/xadmin-api/app/validations"
 	bchmv1 "github.com/airdb/xadmin-api/genproto/bchm/v1"
+	errorCollectionv1 "github.com/airdb/xadmin-api/genproto/error_collection/v1"
 	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
 	teamworkv1 "github.com/airdb/xadmin-api/genproto/teamwork/v1"
 	serverInt "github.com/go-masonry/mortar/interfaces/http/server"
@@ -21,9 +22,10 @@ type servicesDeps struct {
 	fx.In
 
 	// API Implementations
-	Passport passportv1.PassportServiceServer
-	Bchm     bchmv1.BchmServiceServer
-	Teamwork teamworkv1.TeamworkServiceServer
+	Passport        passportv1.PassportServiceServer
+	Bchm            bchmv1.BchmServiceServer
+	Teamwork        teamworkv1.TeamworkServiceServer
+	ErrorCollection errorCollectionv1.ErrorCollectionServiceServer
 }
 
 func ServicesAPIsAndOtherDependenciesFxOption() fx.Option {
@@ -50,6 +52,7 @@ func grpcServiceAPIs(deps servicesDeps) serverInt.GRPCServerAPI {
 		passportv1.RegisterPassportServiceServer(srv, deps.Passport)
 		bchmv1.RegisterBchmServiceServer(srv, deps.Bchm)
 		teamworkv1.RegisterTeamworkServiceServer(srv, deps.Teamwork)
+		errorCollectionv1.RegisterErrorCollectionServiceServer(srv, deps.ErrorCollection)
 		// Any additional gRPC Implementations should be called here
 	}
 }
@@ -67,6 +70,10 @@ func grpcGatewayHandlers() []serverInt.GRPCGatewayGeneratedHandlers {
 		// Register Bchm REST API
 		func(mux *runtime.ServeMux, endpoint string) error {
 			return teamworkv1.RegisterTeamworkServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
+		},
+		// Register errorCollection REST API
+		func(mux *runtime.ServeMux, endpoint string) error {
+			return errorCollectionv1.RegisterErrorCollectionServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
 		},
 		// Any additional gRPC gateway registrations should be called here
 	}
@@ -89,5 +96,9 @@ func servicesDependencies() fx.Option {
 		controllers.CreateTeamworkServiceController,
 		// data.NewTeamworkRepo,
 		validations.CreateTeamworkServiceValidations,
+
+		services.CreateErrorCollectionServiceService,
+		controllers.CreateErrorCollectionServiceController,
+		validations.CreateErrorCollectionServiceValidations,
 	)
 }
