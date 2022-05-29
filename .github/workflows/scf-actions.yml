@@ -62,10 +62,10 @@ jobs:
           make plugins
           make buf
 
-      # - name: Make build
-      #   run: |
-      #     export PATH="$PATH:$(go env GOPATH)/bin"
-      #     make scf-build
+      - name: Make build
+        run: |
+          export PATH="$PATH:$(go env GOPATH)/bin"
+          make scf-build
 
       # - name: Make and deploy
       #   run: make

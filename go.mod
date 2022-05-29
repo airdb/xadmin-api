@@ -2,8 +2,6 @@ module github.com/airdb/xadmin-api
 
 go 1.18
 
-replace github.com/go-masonry/mortar => ../../xqbumu/mortar
-
 require (
 	github.com/alecthomas/kong v0.5.0
 	github.com/casdoor/casdoor-go-sdk v0.4.1
