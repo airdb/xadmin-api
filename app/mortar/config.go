@@ -12,6 +12,7 @@ func ViperFxOption(configFilePath string, additionalFilePaths ...string) fx.Opti
 		for _, extraFile := range additionalFilePaths {
 			builder = builder.AddExtraConfigFile(extraFile)
 		}
-		return builder.Build()
+		config, err := builder.Build()
+		return config, err
 	})
 }
