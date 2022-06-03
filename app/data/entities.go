@@ -3,16 +3,23 @@ package data
 import (
 	"time"
 
+	"github.com/airdb/xadmin-api/pkg/datatypes"
 	"github.com/airdb/xadmin-api/pkg/storagekit"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 )
 
 func MigratorFxOption() fx.Option {
-	return fx.Supply(fx.Annotated{
-		Group:  storagekit.GroupMigrators,
-		Target: storagekit.NewMigrator("bchm", &LostEntity{}),
-	})
+	return fx.Options(
+		fx.Supply(fx.Annotated{
+			Group:  storagekit.GroupMigrators,
+			Target: storagekit.NewMigrator("bchm", &LostEntity{}),
+		}),
+		fx.Supply(fx.Annotated{
+			Group:  storagekit.GroupMigrators,
+			Target: storagekit.NewMigrator("teamwork", &IssueEntity{}),
+		}),
+	)
 }
 
 // PassportEntity is our internal representation of the car
@@ -64,13 +71,19 @@ func (e *LostEntity) TableName() string {
 	return "tab_lost"
 }
 
-// func (e *LostEntity) BeforeUpdate(tx *gorm.DB) (err error) {
-// 	mutates := storagekit.Changed(tx.Statement)
+// IssueEntity is our internal representation of the car
+type IssueEntity struct {
+	datatypes.PrimaryKey
+	CreatedAt time.Time      `json:"created_at"`
+	CreatedBy string         `json:"created_by"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 
-// 	// if no fields changed
-// 	if mutates == nil {
-// 		tx.Statement.BuildClauses = nil
-// 	}
+	ProjectId string `json:"project_id"`
+	Title     string `json:"title"`
+	Content   string `json:"content"`
+}
 
-// 	return nil
-// }
+func (e *IssueEntity) TableName() string {
+	return "tab_issues"
+}

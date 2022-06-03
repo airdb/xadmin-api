@@ -3,7 +3,10 @@ syntax = "proto3";
 package teamwork.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
+import "teamwork/v1/issue.proto";
+import "teamwork/v1/project.proto";
 
 option go_package = "github.com/airdb/xadmin-api/genproto/teamwork/v1;teamworkv1";
 option java_multiple_files = true;
@@ -12,12 +15,72 @@ option java_package = "com.github.airdb.xadmin-api.teamwork.v1";
 
 // Teamwork
 service TeamworkService {
+  // 值班
   rpc ListOnduty(ListOndutyRequest) returns (ListOndutyResponse) {
     option (google.api.http) = {
       get: "/v1/teamwork/onduty"
     };
   }
 
+  // CreateIssue 问题 创建.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: lost, entity: *, action: create}
+  rpc CreateIssue(CreateIssueRequest) returns (CreateIssueResponse) {
+    option (google.api.http) = {
+      post: "/v1/teamwork/issues"
+      body: "issue"
+    };
+  }
+
+  // GetIssue 问题 详情.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: lost, entity: id, action: detail}
+  rpc GetIssue(GetIssueRequest) returns (GetIssueResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/issues/{id}"
+    };
+  }
+
+  // 问题列表
+  // ListIssues 问题 列表.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: lost, entity: *, action: list}
+  rpc ListIssues(ListIssuesRequest) returns (ListIssuesResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/issues"
+    };
+  }
+
+  // DeleteIssue 问题 删除.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: lost, entity: id, action: delete}
+  rpc DeleteIssue(DeleteIssueRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/teamwork/issues/{id}"
+    };
+  }
+
+  // UpdateIssue 问题 更新.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: lost, entity: issue.id, action: update}
+  rpc UpdateIssue(UpdateIssueRequest) returns (UpdateIssueResponse) {
+    option (google.api.http) = {
+      put: "/v1/teamwork/issues/{issue.id}"
+      body: "issue"
+    };
+  }
+
+  // 项目列表
   rpc ListTaskByProject(ListTaskByProjectRequest) returns (ListTaskByProjectResponse) {
     option (google.api.http) = {
       get: "/v1/teamwork/project"
@@ -25,22 +88,12 @@ service TeamworkService {
     };
   }
 
+  // 用户任务
   rpc ListTaskByUser(ListTaskByUserRequest) returns (ListTaskByUserResponse) {
     option (google.api.http) = {
       get: "/v1/teamwork/task/{user_id}"
     };
   }
-}
-
-// Entity 条目
-message Entity {
-  // @Kit
-  //  actions: [create]
-  int32 id = 1;
-
-  // @Kit
-  //  actions: [create, update]
-  string name = 2;
 }
 
 message ListOndutyRequest {
@@ -71,24 +124,6 @@ message ListTaskByProjectResponse {
   repeated Project project = 1;
 }
 
-message Project {
-  int32 id = 1;
-  string project_name = 2;
-  string project_milestone = 3;
-  string created_by = 4;
-  string created_at = 5;
-  repeated TaskProcess task_process = 6;
-  string project_status = 7;
-}
-
-message TaskProcess {
-  string email = 1;
-  string this_week = 2;
-  string next_week = 3;
-  string updated_by = 4;
-  string updated_at = 5;
-}
-
 message ListTaskByUserRequest {
   int32 page_offset = 1;
   int32 page_size = 2;
@@ -99,43 +134,47 @@ message ListTaskByUserResponse {
   string task = 1;
 }
 
-message ListLostsRequest {
+// Issue Method Message Start
+
+message CreateIssueRequest {
+  Issue issue = 1;
+}
+
+message CreateIssueResponse {
+  Issue issue = 1;
+}
+
+message GetIssueRequest {
+  string id = 1;
+}
+
+message GetIssueResponse {
+  Issue issue = 1;
+}
+
+message ListIssuesRequest {
   int32 page_offset = 1;
   int32 page_size = 2;
 }
 
-message ListLostsResponse {
+message ListIssuesResponse {
   int32 total_size = 1;
   int32 filtered_size = 2;
 
-  repeated Entity items = 3;
+  repeated Issue issues = 3;
 }
 
-message GetLostRequest {
-  int32 id = 1;
+message UpdateIssueResponse {
+  Issue issue = 1;
 }
 
-message GetLostResponse {
-  Entity item = 1;
+message DeleteIssueRequest {
+  string id = 1;
 }
 
-message CreateLostRequest {
-  string name = 2;
-}
-
-message CreateLostResponse {
-  Entity item = 1;
-}
-
-message UpdateLostRequest {
-  Entity item = 1;
+message UpdateIssueRequest {
+  Issue issue = 1;
   google.protobuf.FieldMask update_mask = 2;
 }
 
-message UpdateLostResponse {
-  Entity item = 1;
-}
-
-message DeleteLostRequest {
-  int32 id = 1;
-}
+// Issue Method Message End

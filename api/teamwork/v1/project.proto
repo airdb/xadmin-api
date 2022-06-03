@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package teamwork.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/teamwork/v1;teamworkv1";
+option java_multiple_files = true;
+option java_outer_classname = "ProjectProto";
+option java_package = "com.github.airdb.xadmin-api.teamwork.v1";
+
+message Project {
+  string id = 2;
+  google.protobuf.Timestamp created_at = 3;
+  string created_by = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  google.protobuf.Timestamp deleted_at = 6;
+
+  string title = 21;
+  string milestone = 22;
+  string status = 23;
+  repeated TaskProcess task_process = 24;
+}
+
+message TaskProcess {
+  string email = 1;
+  string this_week = 2;
+  string next_week = 3;
+  string updated_by = 4;
+  string updated_at = 5;
+}

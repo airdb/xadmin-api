@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/alecthomas/kong v0.5.0
 	github.com/casdoor/casdoor-go-sdk v0.4.1
+	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/glebarez/sqlite v1.4.5
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-masonry/bjaeger v1.0.12
@@ -16,6 +17,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/oklog/ulid/v2 v2.0.2
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pseudomuto/protokit v0.2.1
 	github.com/rs/cors v1.8.2

@@ -87,6 +87,7 @@ func servicesDependencies() fx.Option {
 		// Teamwork dependents
 		services.CreateTeamworkServiceService,
 		controllers.CreateTeamworkServiceController,
+		data.NewIssueRepo,
 		// data.NewTeamworkRepo,
 		validations.CreateTeamworkServiceValidations,
 	)

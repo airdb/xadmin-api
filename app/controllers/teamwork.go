@@ -19,23 +19,25 @@ type TeamworkServiceController interface {
 type teamworkInfoControllerDeps struct {
 	fx.In
 
-	DB       data.LostRepo
-	LostRepo data.LostRepo
-	Logger   log.Logger
+	Logger    log.Logger
+	LostRepo  data.LostRepo
+	IssueRepo data.IssueRepo
 }
 
 type teamworkInfoController struct {
 	teamworkv1.UnimplementedTeamworkServiceServer
 
-	deps teamworkInfoControllerDeps
-	log  log.Fields
+	log    log.Fields
+	deps   teamworkInfoControllerDeps
+	conver *teamworkConvert
 }
 
 // CreateTeamworkServiceController is a constructor for Fx
 func CreateTeamworkServiceController(deps teamworkInfoControllerDeps) TeamworkServiceController {
 	return &teamworkInfoController{
-		deps: deps,
-		log:  deps.Logger.WithField("controller", "teamwork"),
+		log:    deps.Logger.WithField("controller", "teamwork"),
+		deps:   deps,
+		conver: newTeamworkConvert(),
 	}
 }
 
@@ -81,10 +83,10 @@ func (c *teamworkInfoController) ListTaskByProject(ctx context.Context, request 
 	return &teamworkv1.ListTaskByProjectResponse{
 		Project: []*teamworkv1.Project{
 			{
-				Id:               1,
-				ProjectName:      "项目申报",
-				ProjectMilestone: "phase 1: 完成ppt演示",
-				ProjectStatus:    "进行中",
+				Id:        "1",
+				Title:     "项目申报",
+				Milestone: "phase 1: 完成ppt演示",
+				Status:    "进行中",
 				TaskProcess: []*teamworkv1.TaskProcess{
 					{
 						Email:    "dean@airdb.net",
