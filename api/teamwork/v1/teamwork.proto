@@ -22,11 +22,69 @@ service TeamworkService {
     };
   }
 
+  // CreateProject 问题 创建.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: *, action: create}
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {
+    option (google.api.http) = {
+      post: "/v1/teamwork/projects"
+      body: "project"
+    };
+  }
+
+  // GetProject 问题 详情.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: id, action: detail}
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/projects/{id}"
+    };
+  }
+
+  // 问题列表
+  // ListProjects 问题 列表.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: *, action: list}
+  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/projects"
+    };
+  }
+
+  // DeleteProject 问题 删除.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: id, action: delete}
+  rpc DeleteProject(DeleteProjectRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/teamwork/projects/{id}"
+    };
+  }
+
+  // UpdateProject 问题 更新.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: project.id, action: update}
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {
+    option (google.api.http) = {
+      put: "/v1/teamwork/projects/{project.id}"
+      body: "project"
+    };
+  }
+
   // CreateIssue 问题 创建.
   //
   // @Kit
   //  resources:
-  //    - {domain: teamwork, object: lost, entity: *, action: create}
+  //    - {domain: teamwork, object: issue, entity: *, action: create}
   rpc CreateIssue(CreateIssueRequest) returns (CreateIssueResponse) {
     option (google.api.http) = {
       post: "/v1/teamwork/issues"
@@ -38,7 +96,7 @@ service TeamworkService {
   //
   // @Kit
   //  resources:
-  //    - {domain: teamwork, object: lost, entity: id, action: detail}
+  //    - {domain: teamwork, object: issue, entity: id, action: detail}
   rpc GetIssue(GetIssueRequest) returns (GetIssueResponse) {
     option (google.api.http) = {
       get: "/v1/teamwork/issues/{id}"
@@ -50,7 +108,7 @@ service TeamworkService {
   //
   // @Kit
   //  resources:
-  //    - {domain: teamwork, object: lost, entity: *, action: list}
+  //    - {domain: teamwork, object: issue, entity: *, action: list}
   rpc ListIssues(ListIssuesRequest) returns (ListIssuesResponse) {
     option (google.api.http) = {
       get: "/v1/teamwork/issues"
@@ -61,7 +119,7 @@ service TeamworkService {
   //
   // @Kit
   //  resources:
-  //    - {domain: teamwork, object: lost, entity: id, action: delete}
+  //    - {domain: teamwork, object: issue, entity: id, action: delete}
   rpc DeleteIssue(DeleteIssueRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/teamwork/issues/{id}"
@@ -72,7 +130,7 @@ service TeamworkService {
   //
   // @Kit
   //  resources:
-  //    - {domain: teamwork, object: lost, entity: issue.id, action: update}
+  //    - {domain: teamwork, object: issue, entity: issue.id, action: update}
   rpc UpdateIssue(UpdateIssueRequest) returns (UpdateIssueResponse) {
     option (google.api.http) = {
       put: "/v1/teamwork/issues/{issue.id}"
@@ -133,6 +191,51 @@ message ListTaskByUserRequest {
 message ListTaskByUserResponse {
   string task = 1;
 }
+
+// Project Method Message Start
+
+message CreateProjectRequest {
+  Project project = 1;
+}
+
+message CreateProjectResponse {
+  Project project = 1;
+}
+
+message GetProjectRequest {
+  string id = 1;
+}
+
+message GetProjectResponse {
+  Project project = 1;
+}
+
+message ListProjectsRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+}
+
+message ListProjectsResponse {
+  int32 total_size = 1;
+  int32 filtered_size = 2;
+
+  repeated Project projects = 3;
+}
+
+message UpdateProjectResponse {
+  Project project = 1;
+}
+
+message DeleteProjectRequest {
+  string id = 1;
+}
+
+message UpdateProjectRequest {
+  Project project = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// Project Method Message End
 
 // Issue Method Message Start
 

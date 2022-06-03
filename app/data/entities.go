@@ -17,7 +17,7 @@ func MigratorFxOption() fx.Option {
 		}),
 		fx.Supply(fx.Annotated{
 			Group:  storagekit.GroupMigrators,
-			Target: storagekit.NewMigrator("teamwork", &IssueEntity{}),
+			Target: storagekit.NewMigrator("teamwork", &ProjectEntity{}, &IssueEntity{}),
 		}),
 	)
 }
@@ -71,7 +71,24 @@ func (e *LostEntity) TableName() string {
 	return "tab_lost"
 }
 
-// IssueEntity is our internal representation of the car
+// ProjectEntity is our internal representation of the project
+type ProjectEntity struct {
+	datatypes.PrimaryKey
+	CreatedAt time.Time      `json:"created_at"`
+	CreatedBy string         `json:"created_by"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
+
+	Title     string `json:"title"`
+	Milestone string `json:"milestone"`
+	Status    string `json:"status"`
+}
+
+func (e *ProjectEntity) TableName() string {
+	return "tab_projects"
+}
+
+// IssueEntity is our internal representation of the issue
 type IssueEntity struct {
 	datatypes.PrimaryKey
 	CreatedAt time.Time      `json:"created_at"`

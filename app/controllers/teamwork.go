@@ -19,9 +19,10 @@ type TeamworkServiceController interface {
 type teamworkInfoControllerDeps struct {
 	fx.In
 
-	Logger    log.Logger
-	LostRepo  data.LostRepo
-	IssueRepo data.IssueRepo
+	Logger      log.Logger
+	LostRepo    data.LostRepo
+	ProjectRepo data.ProjectRepo
+	IssueRepo   data.IssueRepo
 }
 
 type teamworkInfoController struct {
