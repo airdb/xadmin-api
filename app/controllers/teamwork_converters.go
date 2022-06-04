@@ -100,6 +100,12 @@ func (c teamworkConvert) FromModelIssueToProtoIssue(in *data.IssueEntity) *teamw
 		CreatedBy: in.CreatedBy,
 		Title:     in.Title,
 		Content:   in.Content,
+		ProjectId: func() string {
+			if in.ProjectId.IsNil() {
+				return ""
+			}
+			return in.ProjectId.String()
+		}(),
 	}
 }
 

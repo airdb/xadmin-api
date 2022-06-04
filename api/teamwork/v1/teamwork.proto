@@ -22,7 +22,7 @@ service TeamworkService {
     };
   }
 
-  // CreateProject 问题 创建.
+  // CreateProject 项目 创建.
   //
   // @Kit
   //  resources:
@@ -34,7 +34,7 @@ service TeamworkService {
     };
   }
 
-  // GetProject 问题 详情.
+  // GetProject 项目 详情.
   //
   // @Kit
   //  resources:
@@ -45,8 +45,8 @@ service TeamworkService {
     };
   }
 
-  // 问题列表
-  // ListProjects 问题 列表.
+  // 项目列表
+  // ListProjects 项目 列表.
   //
   // @Kit
   //  resources:
@@ -57,7 +57,19 @@ service TeamworkService {
     };
   }
 
-  // DeleteProject 问题 删除.
+  // UpdateProject 项目 更新.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: project.id, action: update}
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {
+    option (google.api.http) = {
+      put: "/v1/teamwork/projects/{project.id}"
+      body: "project"
+    };
+  }
+
+  // DeleteProject 项目 删除.
   //
   // @Kit
   //  resources:
@@ -68,15 +80,15 @@ service TeamworkService {
     };
   }
 
-  // UpdateProject 问题 更新.
+  // AssignProjectIssues 项目 更新.
   //
   // @Kit
   //  resources:
-  //    - {domain: teamwork, object: project, entity: project.id, action: update}
-  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {
+  //    - {domain: teamwork, object: project, entity: id, action: update}
+  rpc AssignProjectIssues(AssignProjectIssuesRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      put: "/v1/teamwork/projects/{project.id}"
-      body: "project"
+      put: "/v1/teamwork/projects/{id}/issues:assign"
+      body: "issue_ids"
     };
   }
 
@@ -115,17 +127,6 @@ service TeamworkService {
     };
   }
 
-  // DeleteIssue 问题 删除.
-  //
-  // @Kit
-  //  resources:
-  //    - {domain: teamwork, object: issue, entity: id, action: delete}
-  rpc DeleteIssue(DeleteIssueRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/v1/teamwork/issues/{id}"
-    };
-  }
-
   // UpdateIssue 问题 更新.
   //
   // @Kit
@@ -135,6 +136,17 @@ service TeamworkService {
     option (google.api.http) = {
       put: "/v1/teamwork/issues/{issue.id}"
       body: "issue"
+    };
+  }
+
+  // DeleteIssue 问题 删除.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: issue, entity: id, action: delete}
+  rpc DeleteIssue(DeleteIssueRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/teamwork/issues/{id}"
     };
   }
 
@@ -226,13 +238,18 @@ message UpdateProjectResponse {
   Project project = 1;
 }
 
+message UpdateProjectRequest {
+  Project project = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
 message DeleteProjectRequest {
   string id = 1;
 }
 
-message UpdateProjectRequest {
-  Project project = 1;
-  google.protobuf.FieldMask update_mask = 2;
+message AssignProjectIssuesRequest {
+  string id = 1;
+  repeated string issue_ids = 2;
 }
 
 // Project Method Message End
@@ -267,17 +284,17 @@ message ListIssuesResponse {
   repeated Issue issues = 3;
 }
 
+message UpdateIssueRequest {
+  Issue issue = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
 message UpdateIssueResponse {
   Issue issue = 1;
 }
 
 message DeleteIssueRequest {
   string id = 1;
-}
-
-message UpdateIssueRequest {
-  Issue issue = 1;
-  google.protobuf.FieldMask update_mask = 2;
 }
 
 // Issue Method Message End

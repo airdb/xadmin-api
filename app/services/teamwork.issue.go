@@ -19,10 +19,10 @@ func (w *teamworkImpl) ListIssues(ctx context.Context, request *teamworkv1.ListI
 	return w.deps.Controller.ListIssues(ctx, request)
 }
 
-func (w *teamworkImpl) DeleteIssue(ctx context.Context, request *teamworkv1.DeleteIssueRequest) (*emptypb.Empty, error) {
-	return w.deps.Controller.DeleteIssue(ctx, request)
-}
-
 func (w *teamworkImpl) UpdateIssue(ctx context.Context, request *teamworkv1.UpdateIssueRequest) (*teamworkv1.UpdateIssueResponse, error) {
 	return w.deps.Controller.UpdateIssue(ctx, request)
+}
+
+func (w *teamworkImpl) DeleteIssue(ctx context.Context, request *teamworkv1.DeleteIssueRequest) (*emptypb.Empty, error) {
+	return w.deps.Controller.DeleteIssue(ctx, request)
 }

@@ -3,11 +3,13 @@ package controllers
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	teamworkv1 "github.com/airdb/xadmin-api/genproto/teamwork/v1"
 	"github.com/airdb/xadmin-api/pkg/idkit"
 	"github.com/airdb/xadmin-api/pkg/querykit"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/samber/lo"
 )
 
 func (c *teamworkInfoController) ListProjects(ctx context.Context, request *teamworkv1.ListProjectsRequest) (*teamworkv1.ListProjectsResponse, error) {
@@ -100,6 +102,45 @@ func (c *teamworkInfoController) DeleteProject(ctx context.Context, request *tea
 	if err != nil {
 		c.log.WithError(err).Debug(ctx, "delete project item failed")
 		return nil, errors.New("delete project item failed")
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (c *teamworkInfoController) AssignProjectIssues(ctx context.Context, request *teamworkv1.AssignProjectIssuesRequest) (*empty.Empty, error) {
+	c.log.Debug(ctx, "assign project issues accepted")
+
+	project, err := c.deps.ProjectRepo.Get(ctx, idkit.MustFromString(request.GetId()))
+	if err != nil || project == nil {
+		c.log.WithError(err).Debug(ctx, "get project error")
+		return nil, errors.New("project not exist")
+	}
+
+	issues, err := c.deps.IssueRepo.FindByIds(ctx, request.GetIssueIds())
+	if err != nil {
+		c.log.WithError(err).Debug(ctx, "assign project issues failed")
+		return nil, errors.New("assign project issues failed")
+	}
+
+	if len(issues) != len(request.GetIssueIds()) {
+		ids := make([]string, len(issues))
+		for _, issue := range issues {
+			if !issue.ProjectId.IsNil() {
+				continue
+			}
+			ids = append(ids, issue.Id.String())
+		}
+		l, _ := lo.Difference(request.GetIssueIds(), ids)
+		return nil, fmt.Errorf("issues %s not exist or already assigned", l)
+	}
+
+	ids := make([]idkit.Id, len(issues))
+	for i := 0; i < len(issues); i++ {
+		ids[i] = issues[i].Id
+	}
+	err = c.deps.IssueRepo.AssignToProject(ctx, ids, project.Id)
+	if err != nil {
+		return nil, err
 	}
 
 	return &empty.Empty{}, nil

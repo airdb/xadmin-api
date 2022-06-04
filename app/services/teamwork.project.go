@@ -19,10 +19,14 @@ func (w *teamworkImpl) ListProjects(ctx context.Context, request *teamworkv1.Lis
 	return w.deps.Controller.ListProjects(ctx, request)
 }
 
+func (w *teamworkImpl) UpdateProject(ctx context.Context, request *teamworkv1.UpdateProjectRequest) (*teamworkv1.UpdateProjectResponse, error) {
+	return w.deps.Controller.UpdateProject(ctx, request)
+}
+
 func (w *teamworkImpl) DeleteProject(ctx context.Context, request *teamworkv1.DeleteProjectRequest) (*emptypb.Empty, error) {
 	return w.deps.Controller.DeleteProject(ctx, request)
 }
 
-func (w *teamworkImpl) UpdateProject(ctx context.Context, request *teamworkv1.UpdateProjectRequest) (*teamworkv1.UpdateProjectResponse, error) {
-	return w.deps.Controller.UpdateProject(ctx, request)
+func (w *teamworkImpl) AssignProjectIssues(ctx context.Context, request *teamworkv1.AssignProjectIssuesRequest) (*emptypb.Empty, error) {
+	return w.deps.Controller.AssignProjectIssues(ctx, request)
 }

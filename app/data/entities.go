@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/airdb/xadmin-api/pkg/datatypes"
+	"github.com/airdb/xadmin-api/pkg/idkit"
 	"github.com/airdb/xadmin-api/pkg/storagekit"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
@@ -96,9 +97,9 @@ type IssueEntity struct {
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 
-	ProjectId string `json:"project_id"`
-	Title     string `json:"title"`
-	Content   string `json:"content"`
+	ProjectId idkit.Id `json:"project_id"`
+	Title     string   `json:"title"`
+	Content   string   `json:"content"`
 }
 
 func (e *IssueEntity) TableName() string {
