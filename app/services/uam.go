@@ -27,7 +27,7 @@ type uamImpl struct {
 	log  log.Fields
 }
 
-func CreateServiceService(deps uamServiceDeps) uamv1.ServiceServer {
+func CreateUamServiceService(deps uamServiceDeps) uamv1.ServiceServer {
 	return &uamImpl{
 		deps: deps,
 		log:  deps.Logger.WithField("service", "uam"),

@@ -24,7 +24,7 @@ type bchmInfoControllerDeps struct {
 	LostRepo data.LostRepo
 }
 
-type bchmInfoController struct {
+type bchmController struct {
 	bchmv1.UnimplementedBchmServiceServer
 
 	deps   bchmInfoControllerDeps
@@ -34,14 +34,14 @@ type bchmInfoController struct {
 
 // CreateBchmServiceController is a constructor for Fx
 func CreateBchmServiceController(deps bchmInfoControllerDeps) BchmServiceController {
-	return &bchmInfoController{
+	return &bchmController{
 		deps:   deps,
 		log:    deps.Logger.WithField("controller", "bchm"),
 		conver: newBchmConvert(),
 	}
 }
 
-func (c *bchmInfoController) ListLosts(ctx context.Context, request *bchmv1.ListLostsRequest) (*bchmv1.ListLostsResponse, error) {
+func (c *bchmController) ListLosts(ctx context.Context, request *bchmv1.ListLostsRequest) (*bchmv1.ListLostsResponse, error) {
 	c.log.Debug(ctx, "list losts accepted")
 
 	total, filtered, err := c.deps.LostRepo.Count(ctx, request)
@@ -72,7 +72,7 @@ func (c *bchmInfoController) ListLosts(ctx context.Context, request *bchmv1.List
 	}, nil
 }
 
-func (c *bchmInfoController) GetLost(ctx context.Context, request *bchmv1.GetLostRequest) (*bchmv1.GetLostResponse, error) {
+func (c *bchmController) GetLost(ctx context.Context, request *bchmv1.GetLostRequest) (*bchmv1.GetLostResponse, error) {
 	c.log.Debug(ctx, "get lost accepted")
 
 	item, err := c.deps.LostRepo.Get(ctx, uint(request.GetId()))
@@ -86,7 +86,7 @@ func (c *bchmInfoController) GetLost(ctx context.Context, request *bchmv1.GetLos
 	}, err
 }
 
-func (c *bchmInfoController) CreateLost(ctx context.Context, request *bchmv1.CreateLostRequest) (*bchmv1.CreateLostResponse, error) {
+func (c *bchmController) CreateLost(ctx context.Context, request *bchmv1.CreateLostRequest) (*bchmv1.CreateLostResponse, error) {
 	c.log.Debug(ctx, "create lost accepted")
 
 	item := c.conver.FromProtoCreateLostToModelLost(request)
@@ -101,7 +101,7 @@ func (c *bchmInfoController) CreateLost(ctx context.Context, request *bchmv1.Cre
 	}, err
 }
 
-func (c *bchmInfoController) UpdateLost(ctx context.Context, request *bchmv1.UpdateLostRequest) (*bchmv1.UpdateLostResponse, error) {
+func (c *bchmController) UpdateLost(ctx context.Context, request *bchmv1.UpdateLostRequest) (*bchmv1.UpdateLostResponse, error) {
 	c.log.Debug(ctx, "update lost accepted")
 	data := c.conver.FromProtoLostToModelLost(request.GetItem())
 
@@ -124,7 +124,7 @@ func (c *bchmInfoController) UpdateLost(ctx context.Context, request *bchmv1.Upd
 	}, err
 }
 
-func (c *bchmInfoController) DeleteLost(ctx context.Context, request *bchmv1.DeleteLostRequest) (*empty.Empty, error) {
+func (c *bchmController) DeleteLost(ctx context.Context, request *bchmv1.DeleteLostRequest) (*empty.Empty, error) {
 	c.log.Debug(ctx, "delete lost accepted")
 
 	err := c.deps.LostRepo.Delete(ctx, uint(request.GetId()))

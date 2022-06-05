@@ -10,7 +10,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
-func (c *teamworkInfoController) ListIssues(ctx context.Context, request *teamworkv1.ListIssuesRequest) (*teamworkv1.ListIssuesResponse, error) {
+func (c *teamworkController) ListIssues(ctx context.Context, request *teamworkv1.ListIssuesRequest) (*teamworkv1.ListIssuesResponse, error) {
 	c.log.Debug(ctx, "list issues accepted")
 
 	total, filtered, err := c.deps.IssueRepo.Count(ctx, request)
@@ -41,7 +41,7 @@ func (c *teamworkInfoController) ListIssues(ctx context.Context, request *teamwo
 	}, nil
 }
 
-func (c *teamworkInfoController) GetIssue(ctx context.Context, request *teamworkv1.GetIssueRequest) (*teamworkv1.GetIssueResponse, error) {
+func (c *teamworkController) GetIssue(ctx context.Context, request *teamworkv1.GetIssueRequest) (*teamworkv1.GetIssueResponse, error) {
 	c.log.Debug(ctx, "get issue accepted")
 
 	item, err := c.deps.IssueRepo.Get(ctx, idkit.MustFromString(request.GetId()))
@@ -55,7 +55,7 @@ func (c *teamworkInfoController) GetIssue(ctx context.Context, request *teamwork
 	}, err
 }
 
-func (c *teamworkInfoController) CreateIssue(ctx context.Context, request *teamworkv1.CreateIssueRequest) (*teamworkv1.CreateIssueResponse, error) {
+func (c *teamworkController) CreateIssue(ctx context.Context, request *teamworkv1.CreateIssueRequest) (*teamworkv1.CreateIssueResponse, error) {
 	c.log.Debug(ctx, "create issue accepted")
 
 	item := c.conver.FromProtoCreateIssueToModelIssue(request)
@@ -70,7 +70,7 @@ func (c *teamworkInfoController) CreateIssue(ctx context.Context, request *teamw
 	}, err
 }
 
-func (c *teamworkInfoController) UpdateIssue(ctx context.Context, request *teamworkv1.UpdateIssueRequest) (*teamworkv1.UpdateIssueResponse, error) {
+func (c *teamworkController) UpdateIssue(ctx context.Context, request *teamworkv1.UpdateIssueRequest) (*teamworkv1.UpdateIssueResponse, error) {
 	c.log.Debug(ctx, "update issue accepted")
 	data := c.conver.FromProtoIssueToModelIssue(request.GetIssue())
 
@@ -93,7 +93,7 @@ func (c *teamworkInfoController) UpdateIssue(ctx context.Context, request *teamw
 	}, err
 }
 
-func (c *teamworkInfoController) DeleteIssue(ctx context.Context, request *teamworkv1.DeleteIssueRequest) (*empty.Empty, error) {
+func (c *teamworkController) DeleteIssue(ctx context.Context, request *teamworkv1.DeleteIssueRequest) (*empty.Empty, error) {
 	c.log.Debug(ctx, "delete issue accepted")
 
 	err := c.deps.IssueRepo.Delete(ctx, idkit.MustFromString(request.GetId()))

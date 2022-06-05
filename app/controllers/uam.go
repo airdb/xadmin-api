@@ -15,13 +15,11 @@ type UamServiceController interface {
 type uamControllerDeps struct {
 	fx.In
 
-	Logger      log.Logger
-	LostRepo    data.LostRepo
-	ProjectRepo data.ProjectRepo
-	IssueRepo   data.IssueRepo
+	Logger   log.Logger
+	UserRepo data.UserRepo
 }
 
-type uamInfoController struct {
+type uamController struct {
 	uamv1.UnimplementedServiceServer
 
 	log    log.Fields
@@ -31,7 +29,7 @@ type uamInfoController struct {
 
 // CreateUamServiceController is a constructor for Fx
 func CreateUamServiceController(deps uamControllerDeps) UamServiceController {
-	return &uamInfoController{
+	return &uamController{
 		log:    deps.Logger.WithField("controller", "uam"),
 		deps:   deps,
 		conver: newUamConvert(),

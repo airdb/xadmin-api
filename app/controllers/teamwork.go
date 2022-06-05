@@ -25,7 +25,7 @@ type teamworkInfoControllerDeps struct {
 	IssueRepo   data.IssueRepo
 }
 
-type teamworkInfoController struct {
+type teamworkController struct {
 	teamworkv1.UnimplementedTeamworkServiceServer
 
 	log    log.Fields
@@ -35,14 +35,14 @@ type teamworkInfoController struct {
 
 // CreateTeamworkServiceController is a constructor for Fx
 func CreateTeamworkServiceController(deps teamworkInfoControllerDeps) TeamworkServiceController {
-	return &teamworkInfoController{
+	return &teamworkController{
 		log:    deps.Logger.WithField("controller", "teamwork"),
 		deps:   deps,
 		conver: newTeamworkConvert(),
 	}
 }
 
-func (c *teamworkInfoController) ListOnduty(ctx context.Context, request *teamworkv1.ListOndutyRequest) (*teamworkv1.ListOndutyResponse, error) {
+func (c *teamworkController) ListOnduty(ctx context.Context, request *teamworkv1.ListOndutyRequest) (*teamworkv1.ListOndutyResponse, error) {
 	c.log.Debug(ctx, "list onduty accepted")
 	return &teamworkv1.ListOndutyResponse{
 		// Return recent 3 weeks.
@@ -78,7 +78,7 @@ func (c *teamworkInfoController) ListOnduty(ctx context.Context, request *teamwo
 	}, nil
 }
 
-func (c *teamworkInfoController) ListTaskByProject(ctx context.Context, request *teamworkv1.ListTaskByProjectRequest) (*teamworkv1.ListTaskByProjectResponse, error) {
+func (c *teamworkController) ListTaskByProject(ctx context.Context, request *teamworkv1.ListTaskByProjectRequest) (*teamworkv1.ListTaskByProjectResponse, error) {
 	c.log.Debug(ctx, "list task by project accepted")
 
 	return &teamworkv1.ListTaskByProjectResponse{
@@ -110,7 +110,7 @@ func (c *teamworkInfoController) ListTaskByProject(ctx context.Context, request 
 	}, nil
 }
 
-func (c *teamworkInfoController) ListTaskByUser(ctx context.Context, request *teamworkv1.ListTaskByUserRequest) (*teamworkv1.ListTaskByUserResponse, error) {
+func (c *teamworkController) ListTaskByUser(ctx context.Context, request *teamworkv1.ListTaskByUserRequest) (*teamworkv1.ListTaskByUserResponse, error) {
 	c.log.Debug(ctx, "list task by user accepted")
 	return nil, status.Errorf(codes.Unimplemented, "method ListTaskByUser not implemented")
 }

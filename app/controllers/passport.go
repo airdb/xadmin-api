@@ -30,7 +30,7 @@ type passportInfoControllerDeps struct {
 	Logger log.Logger
 }
 
-type passportInfoController struct {
+type passportController struct {
 	passportv1.UnimplementedPassportServiceServer
 
 	deps   passportInfoControllerDeps
@@ -41,7 +41,7 @@ type passportInfoController struct {
 
 // CreatePassportServiceController is a constructor for Fx
 func CreatePassportServiceController(deps passportInfoControllerDeps) PassportServiceController {
-	return &passportInfoController{
+	return &passportController{
 		deps:   deps,
 		log:    deps.Logger.WithField("controller", "passport"),
 		conver: &passportConvert{},
@@ -49,7 +49,7 @@ func CreatePassportServiceController(deps passportInfoControllerDeps) PassportSe
 	}
 }
 
-func (c *passportInfoController) Preset(ctx context.Context, request *passportv1.PresetRequest) (*passportv1.PresetResponse, error) {
+func (c *passportController) Preset(ctx context.Context, request *passportv1.PresetRequest) (*passportv1.PresetResponse, error) {
 	c.log.Debug(ctx, "preset accepted")
 	domain := request.GetRedirectUri()
 	if len(domain) == 0 {
@@ -61,7 +61,7 @@ func (c *passportInfoController) Preset(ctx context.Context, request *passportv1
 	}, nil
 }
 
-func (c *passportInfoController) Login(ctx context.Context, request *passportv1.LoginRequest) (*passportv1.LoginResponse, error) {
+func (c *passportController) Login(ctx context.Context, request *passportv1.LoginRequest) (*passportv1.LoginResponse, error) {
 	c.log.Debug(ctx, "login accepted")
 
 	info, err := c.deps.DB.GetInfo(ctx, request.GetName())
@@ -77,7 +77,7 @@ func (c *passportInfoController) Login(ctx context.Context, request *passportv1.
 	return &passportv1.LoginResponse{}, err
 }
 
-func (c *passportInfoController) Callback(ctx context.Context, request *passportv1.CallbackRequest) (*passportv1.CallbackResponse, error) {
+func (c *passportController) Callback(ctx context.Context, request *passportv1.CallbackRequest) (*passportv1.CallbackResponse, error) {
 	c.log.Debug(ctx, "callback accepted")
 
 	token, err := auth.GetOAuthToken(request.GetCode(), request.GetState())
@@ -103,7 +103,7 @@ func (c *passportInfoController) Callback(ctx context.Context, request *passport
 	}, nil
 }
 
-func (c *passportInfoController) Profile(ctx context.Context, request *passportv1.ProfileRequest) (*passportv1.ProfileResponse, error) {
+func (c *passportController) Profile(ctx context.Context, request *passportv1.ProfileRequest) (*passportv1.ProfileResponse, error) {
 	c.log.Debug(ctx, "profile accepted")
 
 	user := authkit.FromContextUser(ctx)
@@ -116,7 +116,7 @@ func (c *passportInfoController) Profile(ctx context.Context, request *passportv
 	}, nil
 }
 
-func (c *passportInfoController) Logout(ctx context.Context, request *passportv1.LogoutRequest) (*empty.Empty, error) {
+func (c *passportController) Logout(ctx context.Context, request *passportv1.LogoutRequest) (*empty.Empty, error) {
 	c.log.Debug(ctx, "logout accepted")
 
 	extractor := constructors.DefaultJWTTokenExtractor()

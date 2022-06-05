@@ -2,9 +2,7 @@ syntax = "proto3";
 
 package uam.v1;
 
-import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
-import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/airdb/xadmin-api/genproto/uam/v1;uamv1";
 option java_multiple_files = true;
@@ -13,10 +11,10 @@ option java_package = "com.github.airdb.xadmin-api.uam.v1";
 
 // User has the same definition as https://github.com/casdoor/casdoor/blob/master/object/user.go#L24
 message User {
-  string owner = 1;
-  string name = 2;
-  string created_at = 3;
-  string updated_at = 4;
+  // string owner = 1;
+  string username = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
 
   string id = 5;
   string type = 6;
@@ -31,8 +29,8 @@ message User {
   repeated string address = 15;
   string affiliation = 16;
   string title = 17;
-  string id_card_type = 18;
-  string id_card = 19;
+  // string id_card_type = 18;
+  // string id_card = 19;
   string homepage = 20;
   string bio = 21;
   string tag = 22;
@@ -47,7 +45,7 @@ message User {
   bool is_default_avatar = 31;
   bool is_online = 32;
   bool is_admin = 33;
-  bool is_globalAdmin = 34;
+  bool is_global_admin = 34;
   bool is_forbidden = 35;
   bool is_deleted = 36;
   string signup_application = 37;
@@ -55,22 +53,22 @@ message User {
   string pre_hash = 39;
 
   string created_ip = 40;
-  string last_signin_time = 41;
+  google.protobuf.Timestamp last_signin_time = 41;
   string last_signin_ip = 42;
 
-  string github = 43;
-  string google = 44;
-  string qq = 45;
-  string we_chat = 46;
-  string facebook = 47;
-  string ding_talk = 48;
-  string weibo = 49;
-  string gitee = 50;
-  string linked_in = 51;
-  string wecom = 52;
-  string lark = 53;
-  string gitlab = 54;
+  // string github = 43;
+  // string google = 44;
+  // string qq = 45;
+  // string we_chat = 46;
+  // string facebook = 47;
+  // string ding_talk = 48;
+  // string weibo = 49;
+  // string gitee = 50;
+  // string linked_in = 51;
+  // string wecom = 52;
+  // string lark = 53;
+  // string gitlab = 54;
 
-  string ldap = 55;
+  // string ldap = 55;
   map<string, string> properties = 56;
 }

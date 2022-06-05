@@ -12,7 +12,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func (c *teamworkInfoController) ListProjects(ctx context.Context, request *teamworkv1.ListProjectsRequest) (*teamworkv1.ListProjectsResponse, error) {
+func (c *teamworkController) ListProjects(ctx context.Context, request *teamworkv1.ListProjectsRequest) (*teamworkv1.ListProjectsResponse, error) {
 	c.log.Debug(ctx, "list projects accepted")
 
 	total, filtered, err := c.deps.ProjectRepo.Count(ctx, request)
@@ -43,7 +43,7 @@ func (c *teamworkInfoController) ListProjects(ctx context.Context, request *team
 	}, nil
 }
 
-func (c *teamworkInfoController) GetProject(ctx context.Context, request *teamworkv1.GetProjectRequest) (*teamworkv1.GetProjectResponse, error) {
+func (c *teamworkController) GetProject(ctx context.Context, request *teamworkv1.GetProjectRequest) (*teamworkv1.GetProjectResponse, error) {
 	c.log.Debug(ctx, "get project accepted")
 
 	item, err := c.deps.ProjectRepo.Get(ctx, idkit.MustFromString(request.GetId()))
@@ -57,7 +57,7 @@ func (c *teamworkInfoController) GetProject(ctx context.Context, request *teamwo
 	}, err
 }
 
-func (c *teamworkInfoController) CreateProject(ctx context.Context, request *teamworkv1.CreateProjectRequest) (*teamworkv1.CreateProjectResponse, error) {
+func (c *teamworkController) CreateProject(ctx context.Context, request *teamworkv1.CreateProjectRequest) (*teamworkv1.CreateProjectResponse, error) {
 	c.log.Debug(ctx, "create project accepted")
 
 	item := c.conver.FromProtoCreateProjectToModelProject(request)
@@ -72,7 +72,7 @@ func (c *teamworkInfoController) CreateProject(ctx context.Context, request *tea
 	}, err
 }
 
-func (c *teamworkInfoController) UpdateProject(ctx context.Context, request *teamworkv1.UpdateProjectRequest) (*teamworkv1.UpdateProjectResponse, error) {
+func (c *teamworkController) UpdateProject(ctx context.Context, request *teamworkv1.UpdateProjectRequest) (*teamworkv1.UpdateProjectResponse, error) {
 	c.log.Debug(ctx, "update project accepted")
 	data := c.conver.FromProtoProjectToModelProject(request.GetProject())
 
@@ -95,7 +95,7 @@ func (c *teamworkInfoController) UpdateProject(ctx context.Context, request *tea
 	}, err
 }
 
-func (c *teamworkInfoController) DeleteProject(ctx context.Context, request *teamworkv1.DeleteProjectRequest) (*empty.Empty, error) {
+func (c *teamworkController) DeleteProject(ctx context.Context, request *teamworkv1.DeleteProjectRequest) (*empty.Empty, error) {
 	c.log.Debug(ctx, "delete project accepted")
 
 	err := c.deps.ProjectRepo.Delete(ctx, idkit.MustFromString(request.GetId()))
@@ -107,7 +107,7 @@ func (c *teamworkInfoController) DeleteProject(ctx context.Context, request *tea
 	return &empty.Empty{}, nil
 }
 
-func (c *teamworkInfoController) AssignProjectIssues(ctx context.Context, request *teamworkv1.AssignProjectIssuesRequest) (*empty.Empty, error) {
+func (c *teamworkController) AssignProjectIssues(ctx context.Context, request *teamworkv1.AssignProjectIssuesRequest) (*empty.Empty, error) {
 	c.log.Debug(ctx, "assign project issues accepted")
 
 	project, err := c.deps.ProjectRepo.Get(ctx, idkit.MustFromString(request.GetId()))
