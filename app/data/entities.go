@@ -23,6 +23,11 @@ func MigratorFxOption() fx.Option {
 	)
 }
 
+// UserEntity is our internal representation of the car
+type UserEntity struct {
+	Title string
+}
+
 // PassportEntity is our internal representation of the car
 type PassportEntity struct {
 	Name     string
