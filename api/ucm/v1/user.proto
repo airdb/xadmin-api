@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package ucm.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/ucm/v1;ucmv1";
+option java_multiple_files = true;
+option java_outer_classname = "ucmProto";
+option java_package = "com.github.airdb.xadmin-api.ucm.v1";
+
+// User has the same definition as https://github.com/casdoor/casdoor/blob/master/object/user.go#L24
+message User {
+  string owner = 1;
+  string name = 2;
+  string created_at = 3;
+  string updated_at = 4;
+
+  string id = 5;
+  string type = 6;
+  string password = 7;
+  string password_salt = 8;
+  string display_name = 9;
+  string avatar = 10;
+  string permanent_avatar = 11;
+  string email = 12;
+  string phone = 13;
+  string location = 14;
+  repeated string address = 15;
+  string affiliation = 16;
+  string title = 17;
+  string id_card_type = 18;
+  string id_card = 19;
+  string homepage = 20;
+  string bio = 21;
+  string tag = 22;
+  string region = 23;
+  string language = 24;
+  string gender = 25;
+  string birthday = 26;
+  string education = 27;
+  int32 score = 28;
+  int32 karma = 29;
+  int32 ranking = 30;
+  bool is_default_avatar = 31;
+  bool is_online = 32;
+  bool is_admin = 33;
+  bool is_globalAdmin = 34;
+  bool is_forbidden = 35;
+  bool is_deleted = 36;
+  string signup_application = 37;
+  string hash = 38;
+  string pre_hash = 39;
+
+  string created_ip = 40;
+  string last_signin_time = 41;
+  string last_signin_ip = 42;
+
+  string github = 43;
+  string google = 44;
+  string qq = 45;
+  string we_chat = 46;
+  string facebook = 47;
+  string ding_talk = 48;
+  string weibo = 49;
+  string gitee = 50;
+  string linked_in = 51;
+  string wecom = 52;
+  string lark = 53;
+  string gitlab = 54;
+
+  string ldap = 55;
+  map<string, string> properties = 56;
+}
