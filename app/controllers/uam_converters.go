@@ -2,19 +2,19 @@ package controllers
 
 import (
 	"github.com/airdb/xadmin-api/app/data"
-	ucmv1 "github.com/airdb/xadmin-api/genproto/ucm/v1"
+	uamv1 "github.com/airdb/xadmin-api/genproto/uam/v1"
 )
 
-type ucmConvert struct{}
+type uamConvert struct{}
 
-func newUcmConvert() *ucmConvert {
-	return &ucmConvert{}
+func newUamConvert() *uamConvert {
+	return &uamConvert{}
 }
 
 // User Convert Start
 
 // FromProtoUserToModelUser converts proto model to our data Entity
-func (c ucmConvert) FromProtoUserToModelUser(request *ucmv1.User) *data.UserEntity {
+func (c uamConvert) FromProtoUserToModelUser(request *uamv1.User) *data.UserEntity {
 	if request == nil {
 		return nil
 	}
@@ -24,7 +24,7 @@ func (c ucmConvert) FromProtoUserToModelUser(request *ucmv1.User) *data.UserEnti
 }
 
 // FromProtoUserToModelUser converts proto model to our data Entity
-func (c ucmConvert) FromProtoCreateUserToModelUser(request *ucmv1.CreateUserRequest) *data.UserEntity {
+func (c uamConvert) FromProtoCreateUserToModelUser(request *uamv1.CreateUserRequest) *data.UserEntity {
 	if request == nil {
 		return nil
 	}
@@ -34,12 +34,12 @@ func (c ucmConvert) FromProtoCreateUserToModelUser(request *ucmv1.CreateUserRequ
 }
 
 // FromModelUserToProtoUser converts our data Entity to proto model
-func (c ucmConvert) FromModelUserToProtoUser(in *data.UserEntity) *ucmv1.User {
+func (c uamConvert) FromModelUserToProtoUser(in *data.UserEntity) *uamv1.User {
 	if in == nil {
 		return nil
 	}
 
-	return &ucmv1.User{
+	return &uamv1.User{
 		Title: in.Title,
 	}
 }

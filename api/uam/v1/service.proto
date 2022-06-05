@@ -1,16 +1,16 @@
 syntax = "proto3";
 
-package ucm.v1;
+package uam.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
-import "ucm/v1/user.proto";
+import "uam/v1/user.proto";
 
-option go_package = "github.com/airdb/xadmin-api/genproto/ucm/v1;ucmv1";
+option go_package = "github.com/airdb/xadmin-api/genproto/uam/v1;uamv1";
 option java_multiple_files = true;
-option java_outer_classname = "ucmProto";
-option java_package = "com.github.airdb.xadmin-api.ucm.v1";
+option java_outer_classname = "ServiceProto";
+option java_package = "com.github.airdb.xadmin-api.uam.v1";
 
 // Union Access Manager
 service Service {
@@ -18,10 +18,10 @@ service Service {
   //
   // @Kit
   //  resources:
-  //    - {domain: ucm, object: user, entity: *, action: create}
+  //    - {domain: uam, object: user, entity: *, action: create}
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
     option (google.api.http) = {
-      post: "/v1/ucm/users"
+      post: "/v1/uam/users"
       body: "user"
     };
   }
@@ -30,10 +30,10 @@ service Service {
   //
   // @Kit
   //  resources:
-  //    - {domain: ucm, object: user, entity: id, action: detail}
+  //    - {domain: uam, object: user, entity: id, action: detail}
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {
     option (google.api.http) = {
-      get: "/v1/ucm/users/{id}"
+      get: "/v1/uam/users/{id}"
     };
   }
 
@@ -42,10 +42,10 @@ service Service {
   //
   // @Kit
   //  resources:
-  //    - {domain: ucm, object: user, entity: *, action: list}
+  //    - {domain: uam, object: user, entity: *, action: list}
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
     option (google.api.http) = {
-      get: "/v1/ucm/users"
+      get: "/v1/uam/users"
     };
   }
 
@@ -53,10 +53,10 @@ service Service {
   //
   // @Kit
   //  resources:
-  //    - {domain: ucm, object: user, entity: user.id, action: update}
+  //    - {domain: uam, object: user, entity: user.id, action: update}
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
     option (google.api.http) = {
-      put: "/v1/ucm/users/{user.id}"
+      put: "/v1/uam/users/{user.id}"
       body: "user"
     };
   }
@@ -65,10 +65,10 @@ service Service {
   //
   // @Kit
   //  resources:
-  //    - {domain: ucm, object: user, entity: id, action: delete}
+  //    - {domain: uam, object: user, entity: id, action: delete}
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      delete: "/v1/ucm/users/{id}"
+      delete: "/v1/uam/users/{id}"
     };
   }
 }
