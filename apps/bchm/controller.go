@@ -1,10 +1,10 @@
-package controllers
+package bchm
 
 import (
 	"context"
 	"errors"
 
-	"github.com/airdb/xadmin-api/app/data"
+	"github.com/airdb/xadmin-api/apps/data"
 	bchmv1 "github.com/airdb/xadmin-api/genproto/bchm/v1"
 	"github.com/airdb/xadmin-api/pkg/querykit"
 	"github.com/go-masonry/mortar/interfaces/log"

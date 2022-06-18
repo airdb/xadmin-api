@@ -1,10 +1,8 @@
-package services
+package bchm
 
 import (
 	"context"
 
-	"github.com/airdb/xadmin-api/app/controllers"
-	"github.com/airdb/xadmin-api/app/validations"
 	bchmv1 "github.com/airdb/xadmin-api/genproto/bchm/v1"
 	"github.com/go-masonry/mortar/interfaces/cfg"
 	"github.com/go-masonry/mortar/interfaces/log"
@@ -18,8 +16,8 @@ type bchmServiceDeps struct {
 
 	Logger      log.Logger
 	Config      cfg.Config
-	Controller  controllers.BchmServiceController
-	Validations validations.BchmServiceValidations
+	Controller  BchmServiceController
+	Validations BchmServiceValidations
 	Metrics     monitor.Metrics `optional:"true"`
 }
 

@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/airdb/xadmin-api/app/mortar"
+	"github.com/airdb/xadmin-api/apps/mortar"
 	"github.com/go-masonry/mortar/providers"
 	"go.uber.org/fx"
 )

@@ -1,7 +1,7 @@
-package controllers
+package uam
 
 import (
-	"github.com/airdb/xadmin-api/app/data"
+	"github.com/airdb/xadmin-api/apps/data"
 	uamv1 "github.com/airdb/xadmin-api/genproto/uam/v1"
 	"github.com/go-masonry/mortar/interfaces/log"
 	"go.uber.org/fx"

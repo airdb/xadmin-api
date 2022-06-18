@@ -3,10 +3,11 @@ package mortar
 import (
 	"context"
 
-	"github.com/airdb/xadmin-api/app/controllers"
-	"github.com/airdb/xadmin-api/app/data"
-	"github.com/airdb/xadmin-api/app/services"
-	"github.com/airdb/xadmin-api/app/validations"
+	"github.com/airdb/xadmin-api/apps/bchm"
+	"github.com/airdb/xadmin-api/apps/data"
+	"github.com/airdb/xadmin-api/apps/passport"
+	"github.com/airdb/xadmin-api/apps/teamwork"
+	"github.com/airdb/xadmin-api/apps/uam"
 	bchmv1 "github.com/airdb/xadmin-api/genproto/bchm/v1"
 	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
 	teamworkv1 "github.com/airdb/xadmin-api/genproto/teamwork/v1"
@@ -82,26 +83,26 @@ func grpcGatewayHandlers() []serverInt.GRPCGatewayGeneratedHandlers {
 func servicesDependencies() fx.Option {
 	return fx.Provide(
 		// Passport dependents
-		services.CreatePassportServiceService,
-		controllers.CreatePassportServiceController,
+		passport.CreatePassportServiceService,
+		passport.CreatePassportServiceController,
 		data.NewPassportRepo,
-		validations.CreatePassportServiceValidations,
+		passport.CreatePassportServiceValidations,
 		// Bchm dependents
-		services.CreateBchmServiceService,
-		controllers.CreateBchmServiceController,
+		bchm.CreateBchmServiceService,
+		bchm.CreateBchmServiceController,
 		data.NewLostRepo,
-		validations.CreateBchmServiceValidations,
+		bchm.CreateBchmServiceValidations,
 		// Teamwork dependents
-		services.CreateTeamworkServiceService,
-		controllers.CreateTeamworkServiceController,
+		teamwork.CreateTeamworkServiceService,
+		teamwork.CreateTeamworkServiceController,
 		data.NewProjectRepo,
 		data.NewIssueRepo,
-		validations.CreateTeamworkServiceValidations,
+		teamwork.CreateTeamworkServiceValidations,
 		// Uam dependents
-		services.CreateUamServiceService,
-		controllers.CreateUamServiceController,
+		uam.CreateUamServiceService,
+		uam.CreateUamServiceController,
 		data.NewUserRepo,
-		validations.CreateUamServiceValidations,
+		uam.CreateUamServiceValidations,
 		// data.NewTeamworkRepo,
 	)
 }

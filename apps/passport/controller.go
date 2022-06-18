@@ -1,4 +1,4 @@
-package controllers
+package passport
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/airdb/xadmin-api/app/data"
+	"github.com/airdb/xadmin-api/apps/data"
 	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
 	"github.com/airdb/xadmin-api/pkg/authkit"
 	"github.com/casdoor/casdoor-go-sdk/auth"

@@ -1,7 +1,7 @@
-package controllers
+package bchm
 
 import (
-	"github.com/airdb/xadmin-api/app/data"
+	"github.com/airdb/xadmin-api/apps/data"
 	bchmv1 "github.com/airdb/xadmin-api/genproto/bchm/v1"
 	"github.com/golang/protobuf/ptypes"
 	"google.golang.org/protobuf/types/known/timestamppb"

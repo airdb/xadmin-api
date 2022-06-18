@@ -1,9 +1,9 @@
-package controllers
+package teamwork
 
 import (
 	"context"
 
-	"github.com/airdb/xadmin-api/app/data"
+	"github.com/airdb/xadmin-api/apps/data"
 	teamworkv1 "github.com/airdb/xadmin-api/genproto/teamwork/v1"
 	"github.com/go-masonry/mortar/interfaces/log"
 	"go.uber.org/fx"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/airdb/xadmin-api/app/mortar"
+	"github.com/airdb/xadmin-api/apps/mortar"
 	"github.com/alecthomas/kong"
 	"github.com/go-masonry/mortar/providers"
 	"go.uber.org/fx"

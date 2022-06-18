@@ -1,4 +1,4 @@
-package controllers
+package teamwork
 
 import (
 	"context"

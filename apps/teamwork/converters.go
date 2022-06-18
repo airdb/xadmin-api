@@ -1,7 +1,7 @@
-package controllers
+package teamwork
 
 import (
-	"github.com/airdb/xadmin-api/app/data"
+	"github.com/airdb/xadmin-api/apps/data"
 	teamworkv1 "github.com/airdb/xadmin-api/genproto/teamwork/v1"
 	"github.com/airdb/xadmin-api/pkg/datatypes"
 	"github.com/airdb/xadmin-api/pkg/idkit"

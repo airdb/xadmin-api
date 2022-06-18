@@ -1,10 +1,8 @@
-package services
+package teamwork
 
 import (
 	"context"
 
-	"github.com/airdb/xadmin-api/app/controllers"
-	"github.com/airdb/xadmin-api/app/validations"
 	teamworkv1 "github.com/airdb/xadmin-api/genproto/teamwork/v1"
 	"github.com/go-masonry/mortar/interfaces/cfg"
 	"github.com/go-masonry/mortar/interfaces/log"
@@ -17,8 +15,8 @@ type teamworkServiceDeps struct {
 
 	Logger      log.Logger
 	Config      cfg.Config
-	Controller  controllers.TeamworkServiceController
-	Validations validations.TeamworkServiceValidations
+	Controller  TeamworkServiceController
+	Validations TeamworkServiceValidations
 	Metrics     monitor.Metrics `optional:"true"`
 }
 

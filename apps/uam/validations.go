@@ -1,4 +1,4 @@
-package validations
+package uam
 
 type UamServiceValidations interface {
 }

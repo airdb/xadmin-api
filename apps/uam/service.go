@@ -1,8 +1,6 @@
-package services
+package uam
 
 import (
-	"github.com/airdb/xadmin-api/app/controllers"
-	"github.com/airdb/xadmin-api/app/validations"
 	uamv1 "github.com/airdb/xadmin-api/genproto/uam/v1"
 	"github.com/go-masonry/mortar/interfaces/cfg"
 	"github.com/go-masonry/mortar/interfaces/log"
@@ -15,8 +13,8 @@ type uamServiceDeps struct {
 
 	Logger      log.Logger
 	Config      cfg.Config
-	Controller  controllers.UamServiceController
-	Validations validations.UamServiceValidations
+	Controller  UamServiceController
+	Validations UamServiceValidations
 	Metrics     monitor.Metrics `optional:"true"`
 }
 

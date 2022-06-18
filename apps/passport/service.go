@@ -1,10 +1,8 @@
-package services
+package passport
 
 import (
 	"context"
 
-	"github.com/airdb/xadmin-api/app/controllers"
-	"github.com/airdb/xadmin-api/app/validations"
 	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
 	"github.com/go-masonry/mortar/interfaces/cfg"
 	"github.com/go-masonry/mortar/interfaces/log"
@@ -18,8 +16,8 @@ type passportServiceDeps struct {
 
 	Logger      log.Logger
 	Config      cfg.Config
-	Controller  controllers.PassportServiceController
-	Validations validations.PassportServiceValidations
+	Controller  PassportServiceController
+	Validations PassportServiceValidations
 	Metrics     monitor.Metrics `optional:"true"`
 }
 
