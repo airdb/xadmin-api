@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package uam.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "uam/v1/user.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/uam/v1;uamv1";
+option java_multiple_files = true;
+option java_outer_classname = "ServiceProto";
+option java_package = "com.github.airdb.xadmin-api.uam.v1";
+
+// Union Access Manager
+service Service {
+  // CreateUser 项目 创建.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: uam, object: user, entity: *, action: create}
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/uam/users"
+      body: "user"
+    };
+  }
+
+  // GetUser 项目 详情.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: uam, object: user, entity: id, action: detail}
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/uam/users/{id}"
+    };
+  }
+
+  // 项目列表
+  // ListUsers 项目 列表.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: uam, object: user, entity: *, action: list}
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/uam/users"
+    };
+  }
+
+  // UpdateUser 项目 更新.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: uam, object: user, entity: user.id, action: update}
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/v1/uam/users/{user.id}"
+      body: "user"
+    };
+  }
+
+  // DeleteUser 项目 删除.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: uam, object: user, entity: id, action: delete}
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/uam/users/{id}"
+    };
+  }
+}
+
+// User Method Message Start
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message ListUsersRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+}
+
+message ListUsersResponse {
+  int32 total_size = 1;
+  int32 filtered_size = 2;
+
+  repeated User users = 3;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  User user = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+// User Method Message End

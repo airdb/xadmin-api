@@ -1,0 +1,300 @@
+syntax = "proto3";
+
+package teamwork.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "teamwork/v1/issue.proto";
+import "teamwork/v1/project.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/teamwork/v1;teamworkv1";
+option java_multiple_files = true;
+option java_outer_classname = "TeamworkProto";
+option java_package = "com.github.airdb.xadmin-api.teamwork.v1";
+
+// Teamwork
+service TeamworkService {
+  // 值班
+  rpc ListOnduty(ListOndutyRequest) returns (ListOndutyResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/onduty"
+    };
+  }
+
+  // CreateProject 项目 创建.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: *, action: create}
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {
+    option (google.api.http) = {
+      post: "/v1/teamwork/projects"
+      body: "project"
+    };
+  }
+
+  // GetProject 项目 详情.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: id, action: detail}
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/projects/{id}"
+    };
+  }
+
+  // 项目列表
+  // ListProjects 项目 列表.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: *, action: list}
+  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/projects"
+    };
+  }
+
+  // UpdateProject 项目 更新.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: project.id, action: update}
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {
+    option (google.api.http) = {
+      put: "/v1/teamwork/projects/{project.id}"
+      body: "project"
+    };
+  }
+
+  // DeleteProject 项目 删除.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: id, action: delete}
+  rpc DeleteProject(DeleteProjectRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/teamwork/projects/{id}"
+    };
+  }
+
+  // AssignProjectIssues 项目 更新.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: project, entity: id, action: update}
+  rpc AssignProjectIssues(AssignProjectIssuesRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/v1/teamwork/projects/{id}/issues:assign"
+      body: "issue_ids"
+    };
+  }
+
+  // CreateIssue 问题 创建.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: issue, entity: *, action: create}
+  rpc CreateIssue(CreateIssueRequest) returns (CreateIssueResponse) {
+    option (google.api.http) = {
+      post: "/v1/teamwork/issues"
+      body: "issue"
+    };
+  }
+
+  // GetIssue 问题 详情.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: issue, entity: id, action: detail}
+  rpc GetIssue(GetIssueRequest) returns (GetIssueResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/issues/{id}"
+    };
+  }
+
+  // 问题列表
+  // ListIssues 问题 列表.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: issue, entity: *, action: list}
+  rpc ListIssues(ListIssuesRequest) returns (ListIssuesResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/issues"
+    };
+  }
+
+  // UpdateIssue 问题 更新.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: issue, entity: issue.id, action: update}
+  rpc UpdateIssue(UpdateIssueRequest) returns (UpdateIssueResponse) {
+    option (google.api.http) = {
+      put: "/v1/teamwork/issues/{issue.id}"
+      body: "issue"
+    };
+  }
+
+  // DeleteIssue 问题 删除.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: teamwork, object: issue, entity: id, action: delete}
+  rpc DeleteIssue(DeleteIssueRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/teamwork/issues/{id}"
+    };
+  }
+
+  // 项目列表
+  rpc ListTaskByProject(ListTaskByProjectRequest) returns (ListTaskByProjectResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/project"
+      // get: "/v1/teamwork/task/{project_id}"
+    };
+  }
+
+  // 用户任务
+  rpc ListTaskByUser(ListTaskByUserRequest) returns (ListTaskByUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/teamwork/task/{user_id}"
+    };
+  }
+}
+
+message ListOndutyRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+}
+
+message ListOndutyResponse {
+  repeated Onduty schedule = 1;
+}
+
+message Onduty {
+  int32 id = 1;
+  int32 year = 2;
+  int32 week = 3;
+  string team_name = 4;
+  string onduty_email = 5;
+  string created_by = 6;
+  string created_at = 7;
+}
+
+message ListTaskByProjectRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+  int32 project_id = 3;
+}
+message ListTaskByProjectResponse {
+  repeated Project project = 1;
+}
+
+message ListTaskByUserRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+  int32 user_id = 3;
+}
+
+message ListTaskByUserResponse {
+  string task = 1;
+}
+
+// Project Method Message Start
+
+message CreateProjectRequest {
+  Project project = 1;
+}
+
+message CreateProjectResponse {
+  Project project = 1;
+}
+
+message GetProjectRequest {
+  string id = 1;
+}
+
+message GetProjectResponse {
+  Project project = 1;
+}
+
+message ListProjectsRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+}
+
+message ListProjectsResponse {
+  int32 total_size = 1;
+  int32 filtered_size = 2;
+
+  repeated Project projects = 3;
+}
+
+message UpdateProjectResponse {
+  Project project = 1;
+}
+
+message UpdateProjectRequest {
+  Project project = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteProjectRequest {
+  string id = 1;
+}
+
+message AssignProjectIssuesRequest {
+  string id = 1;
+  repeated string issue_ids = 2;
+}
+
+// Project Method Message End
+
+// Issue Method Message Start
+
+message CreateIssueRequest {
+  Issue issue = 1;
+}
+
+message CreateIssueResponse {
+  Issue issue = 1;
+}
+
+message GetIssueRequest {
+  string id = 1;
+}
+
+message GetIssueResponse {
+  Issue issue = 1;
+}
+
+message ListIssuesRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+}
+
+message ListIssuesResponse {
+  int32 total_size = 1;
+  int32 filtered_size = 2;
+
+  repeated Issue issues = 3;
+}
+
+message UpdateIssueRequest {
+  Issue issue = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateIssueResponse {
+  Issue issue = 1;
+}
+
+message DeleteIssueRequest {
+  string id = 1;
+}
+
+// Issue Method Message End

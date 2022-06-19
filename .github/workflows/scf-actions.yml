@@ -10,6 +10,7 @@ jobs:
         node-version: ["16.x"]
         pnpm-version: ["6.0.2"]
         go-version: ["1.18.2"]
+        upx-version: ["v3.96"]
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
@@ -31,14 +32,15 @@ jobs:
       - name: Use Buf Lint
         uses: bufbuild/buf-lint-action@v1
 
-      - name: Setup pnpm cache
+      - name: Setup tools cache
         uses: actions/cache@v3
         with:
           path: |
             ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/serverless.yaml') }}
+            /opt/hostedtoolcache/ghaction-upx
+          key: ${{ runner.os }}-tools-store-${{ hashFiles('**/serverless.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-tools-store-
 
       - name: Stepup go cache
         uses: actions/cache@v3
@@ -53,27 +55,52 @@ jobs:
       - name: Install dependencies
         run: pnpm install --global serverless serverless-tencent
 
-      - name: Check Go Version
-        run: go version
+      # set the scf stage by ref name
+      - name: Setup stage release
+        if: startsWith(github.ref_name, 'main')
+        run: |
+          echo "STAGE=release" >> $GITHUB_ENV
 
-      - name: Make prepare
+      - name: Setup stage development
+        if: startsWith(github.ref_name, 'main') == false
+        run: |
+          echo "STAGE=test" >> $GITHUB_ENV
+
+      - name: Prepare plugins
         run: |
           export PATH="$PATH:$(go env GOPATH)/bin"
           make plugins
           make buf
 
-      # - name: Make build
-      #   run: |
-      #     export PATH="$PATH:$(go env GOPATH)/bin"
-      #     make scf-build
+      # build and deploy
+      - name: Make build
+        run: |
+          export PATH="$PATH:$(go env GOPATH)/bin"
+          make scf-build
 
-      # - name: Make and deploy
-      #   run: make
-      #   env:
-      #     TENCENT_APP_ID: ${{ secrets.TENCENT_APP_ID }}
-      #     TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
-      #     TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
-      #     TENCENT_TOKEN: ${{ secrets.TENCENT_TOKEN }}
-      #     STAGE: ${{ secrets.STAGE }}
-      #     SCF_NAMESPACE: ${{ secrets.SCF_NAMESPACE }}
-      #     SERVERLESS_PLATFORM_VENDOR: ${{ secrets.SERVERLESS_PLATFORM_VENDOR }}
+      - name: Run UPX
+        uses: crazy-max/ghaction-upx@v2
+        with:
+          version: ${{ matrix.upx-version }}
+          files: |
+            ./main
+          args: -fq
+
+      # add configs
+      - name: Add Configs
+        shell: bash
+        run: |
+          echo "$XADMIN_CONFIG" > ./config/config_local.yml
+          echo "$XADMIN_JWT_KEY" > ./config/token_jwt_key.pem
+        env:
+          XADMIN_CONFIG: ${{ secrets.XADMIN_CONFIG }}
+          XADMIN_JWT_KEY: ${{ secrets.XADMIN_JWT_KEY }}
+
+      - name: Deploy
+        run: make scf-deploy
+        env:
+          TENCENT_APP_ID: ${{ secrets.TENCENT_APP_ID }}
+          TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
+          TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
+          SCF_NAMESPACE: ${{ secrets.SCF_NAMESPACE }}
+          SERVERLESS_PLATFORM_VENDOR: ${{ secrets.SERVERLESS_PLATFORM_VENDOR }}
