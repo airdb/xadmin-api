@@ -22,3 +22,6 @@ make run
 | TENCENT_SECRET_KEY         | tencent cloud secret key     |         |
 | XADMIN_CONFIG              | the config used to overwrite |         |
 | XADMIN_JWT_KEY             | the key used by jtw          |         |
+
+
+![Alt](https://repobeats.axiom.co/api/embed/3e87e8fc8ca29c0a9aaff199afb8a06e589fbdca.svg "Repobeats analytics image")
