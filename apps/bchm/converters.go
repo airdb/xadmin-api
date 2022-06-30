@@ -7,14 +7,14 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type bchmConvert struct{}
+type Convert struct{}
 
-func newBchmConvert() *bchmConvert {
-	return &bchmConvert{}
+func newConvert() *Convert {
+	return &Convert{}
 }
 
 // FromProtoLostToModelLost converts proto model to our data Entity
-func (c bchmConvert) FromProtoLostToModelLost(request *bchmv1.Lost) *data.LostEntity {
+func (c Convert) FromProtoLostToModelLost(request *bchmv1.Lost) *data.LostEntity {
 	if request == nil {
 		return nil
 	}
@@ -42,7 +42,7 @@ func (c bchmConvert) FromProtoLostToModelLost(request *bchmv1.Lost) *data.LostEn
 }
 
 // FromProtoLostToModelLost converts proto model to our data Entity
-func (c bchmConvert) FromProtoCreateLostToModelLost(request *bchmv1.CreateLostRequest) *data.LostEntity {
+func (c Convert) FromProtoCreateLostToModelLost(request *bchmv1.CreateLostRequest) *data.LostEntity {
 	if request == nil {
 		return nil
 	}
@@ -68,7 +68,7 @@ func (c bchmConvert) FromProtoCreateLostToModelLost(request *bchmv1.CreateLostRe
 }
 
 // FromModelLostToProtoLost converts our data Entity to proto model
-func (c bchmConvert) FromModelLostToProtoLost(in *data.LostEntity) *bchmv1.Lost {
+func (c Convert) FromModelLostToProtoLost(in *data.LostEntity) *bchmv1.Lost {
 	if in == nil {
 		return nil
 	}

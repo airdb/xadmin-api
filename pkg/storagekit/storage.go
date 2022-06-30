@@ -12,7 +12,11 @@ import (
 func GetDB(cfg cfg.Config, module string) (*gorm.DB, error) {
 	var conCfg ConnectionConfig
 	cfgData := cfg.Get(fmt.Sprintf("services.%s.database", module))
-	log.Println(cfgData.Raw())
+	if !cfgData.IsSet() {
+		return nil, nil
+	}
+
+	log.Println("GetDB With:", cfgData.Raw())
 	err := mapstructure.Decode(cfgData.Raw(), &conCfg)
 	if err != nil {
 		return nil, err

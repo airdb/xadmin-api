@@ -24,7 +24,7 @@ type servicesDeps struct {
 
 	// API Implementations
 	Passport passportv1.PassportServiceServer
-	Bchm     bchmv1.BchmServiceServer
+	Bchm     bchmv1.ServiceServer
 	Teamwork teamworkv1.TeamworkServiceServer
 	Uam      uamv1.ServiceServer
 }
@@ -51,7 +51,7 @@ func ServicesAPIsAndOtherDependenciesFxOption() fx.Option {
 func grpcServiceAPIs(deps servicesDeps) serverInt.GRPCServerAPI {
 	return func(srv *grpc.Server) {
 		passportv1.RegisterPassportServiceServer(srv, deps.Passport)
-		bchmv1.RegisterBchmServiceServer(srv, deps.Bchm)
+		bchmv1.RegisterServiceServer(srv, deps.Bchm)
 		teamworkv1.RegisterTeamworkServiceServer(srv, deps.Teamwork)
 		uamv1.RegisterServiceServer(srv, deps.Uam)
 		// Any additional gRPC Implementations should be called here
@@ -66,7 +66,7 @@ func grpcGatewayHandlers() []serverInt.GRPCGatewayGeneratedHandlers {
 		},
 		// Register Bchm REST API
 		func(mux *runtime.ServeMux, endpoint string) error {
-			return bchmv1.RegisterBchmServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
+			return bchmv1.RegisterServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
 		},
 		// Register Teamwork REST API
 		func(mux *runtime.ServeMux, endpoint string) error {
@@ -88,10 +88,13 @@ func servicesDependencies() fx.Option {
 		data.NewPassportRepo,
 		passport.CreatePassportServiceValidations,
 		// Bchm dependents
-		bchm.CreateBchmServiceService,
-		bchm.CreateBchmServiceController,
+		bchm.CreateServiceService,
+		bchm.CreateController,
+		data.NewFileRepo,
+		data.NewCategoryRepo,
 		data.NewLostRepo,
-		bchm.CreateBchmServiceValidations,
+		data.NewLostStatRepo,
+		bchm.CreateServiceValidations,
 		// Teamwork dependents
 		teamwork.CreateTeamworkServiceService,
 		teamwork.CreateTeamworkServiceController,

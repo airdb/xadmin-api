@@ -16,6 +16,7 @@ func HttpClientFxOptions() fx.Option {
 
 func HttpServerFxOptions() fx.Option {
 	return fx.Options(
+		CacheFxOption(),
 		HTTPServerBuilderFxOption(), // Web Server Builder
 		providers.GRPCTracingUnaryServerInterceptorFxOption(),
 		providers.GRPCGatewayMetadataTraceCarrierFxOption(), // read it's documentation to understand better

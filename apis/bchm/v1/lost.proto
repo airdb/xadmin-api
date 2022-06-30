@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package bchm.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/bchm/v1;bchmv1";
+option java_multiple_files = true;
+option java_outer_classname = "LostProto";
+option java_package = "com.github.airdb.xadmin-api.bchm.v1";
+
+// Lost 走失信息
+// @Kit
+//  maskMap:
+//    name: nickname
+message Lost {
+  // ID
+  //
+  // @Kit
+  //  actions: [create]
+  int32 id = 1;
+
+  // 基础信息
+
+  // 姓名
+  //
+  // @Kit
+  //  actions: [create, update]
+  string name = 2;
+
+  // 性别
+  //
+  // @Kit
+  //  options:
+  //    - 1 // 男
+  //    - 2 // 女
+  //    - 0 // 未知
+  uint32 gender = 3;
+  // 出生日期
+  google.protobuf.Timestamp birthed_at = 4;
+  // 寻亲目标轮播图
+  repeated string carousel = 5;
+
+  // 失踪信息
+
+  // 失踪时间
+  google.protobuf.Timestamp missed_at = 6;
+  string missed_country = 7; // 失踪国家
+  string missed_province = 8; // 失踪省
+  string missed_city = 9; // 失踪市
+  string missed_addr = 10; // 详细地址
+  string missed_height = 11; // 失踪时身高
+  string character = 12; // 特征
+  string details = 13; // 失踪详情
+
+  // 寻亲信息
+  string category = 14; // 寻亲类型
+  string data_from = 15; // 信息来源
+  string follower = 16; // 跟进志愿者
+}
