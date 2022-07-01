@@ -6,6 +6,7 @@ import (
 
 	"github.com/glebarez/sqlite"
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
@@ -66,6 +67,8 @@ func (m *Manager) ensureDialector(cc *ConnectionConfig) error {
 			m.dialector[cc.String()] = sqlite.Open(cc.Dsn)
 		case "mysql":
 			m.dialector[cc.String()] = mysql.Open(cc.Dsn)
+		case "postgres":
+			m.dialector[cc.String()] = postgres.Open(cc.Dsn)
 		default:
 			return fmt.Errorf("connection type(%s) is not supported", cc.Type)
 		}

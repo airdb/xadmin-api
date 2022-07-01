@@ -17,7 +17,11 @@ type FileEntity struct {
 	UUID     string `json:"uuid"`
 	Type     string `json:"type"`
 	SortID   int    `json:"sort_id"`
-	ParentID int    `json:"parent_id"`
+	ParentID uint   `json:"parent_id"`
 	URL      string `json:"url"`
 	Status   int    `json:"status"`
+}
+
+func (e *FileEntity) TableName() string {
+	return "tab_file"
 }

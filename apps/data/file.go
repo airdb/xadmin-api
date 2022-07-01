@@ -14,6 +14,8 @@ import (
 // This interface will represent our car db
 type FileRepo interface {
 	repo.Repo[FileEntity, uint, commonv1.ListFilesRequest]
+
+	GetLostByID(ctx context.Context, lostId uint) ([]*FileEntity, error)
 }
 
 type fileRepoDeps struct {

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package bchm.v1;
 
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/airdb/xadmin-api/genproto/bchm/v1;bchmv1";
@@ -39,7 +40,12 @@ message Lost {
   // 出生日期
   google.protobuf.Timestamp birthed_at = 4;
   // 寻亲目标轮播图
-  repeated string carousel = 5;
+  message Carousel {
+    int32 id = 1;
+    string title = 2;
+    string url = 3;
+  }
+  repeated Carousel carousel = 5;
 
   // 失踪信息
 
@@ -58,3 +64,117 @@ message Lost {
   string data_from = 15; // 信息来源
   string follower = 16; // 跟进志愿者
 }
+
+// 微信相关信息
+message LostWxMore {
+  // 分享到对话
+  message ShareAppMessage {
+    string share_key = 1; // 用于分享后的通知回传
+    string title = 2; // 转发标题
+    string image_url = 3; // 自定义图片路径
+  }
+  // 分享到朋友圈
+  message ShareTimeline {
+    string share_key = 1; // 用于分享后的通知回传
+    string title = 2; // 自定义标题
+    string image_url = 3; // 自定义页面路径中携带的参数
+    string query = 4; // 自定义图片路径
+  } 
+  // 小程序二维码图片链接
+  message CodeUnlimit {
+    string url = 1; // 图片链接
+  }
+
+  ShareAppMessage share_app_message = 1; // 分享到对话
+  ShareTimeline share_timeline = 2; // 分享到朋友圈
+  CodeUnlimit code_unlimit = 3; // 小程序二维码
+}
+
+
+// Lost Start
+
+message ListLostsRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+  string keyword = 3;
+  string category = 4;
+}
+
+message ListLostsResponse {
+  int32 total_size = 1;
+  int32 filtered_size = 2;
+
+  repeated Lost losts = 3;
+}
+
+message GetLostRequest {
+  int32 id = 1;
+}
+
+message GetLostResponse {
+  Lost lost = 1;
+  LostWxMore wx_more = 2;
+}
+
+message ShareLostCallbackRequest {
+  int32 id = 1;
+  string share_key = 2;
+}
+
+message ShareLostCallbackResponse {
+  Lost lost = 1;
+}
+
+message GetLostMpCodeRequest {
+  int32 id = 1;
+}
+
+message GetLostMpCodeResponse {
+  bytes code = 1;
+}
+
+message CreateLostRequest {
+  // 基础信息
+
+  // Name
+  string name = 2; // 姓名
+  uint32 gender = 3; // 性别: 1男 2女 0未知
+  google.protobuf.Timestamp birthed_at = 4; // 出生日期
+  repeated string carousel = 5; // 寻亲目标轮播图
+
+  // 失踪信息
+  google.protobuf.Timestamp missed_at = 6; // 失踪时间
+  string missed_country = 7; // 失踪国家
+  string missed_province = 8; // 失踪省
+  string missed_city = 9; // 失踪市
+  string missed_addr = 10; // 详细地址
+  string missed_height = 11; // 失踪时身高
+  string character = 12; // 特征
+  string details = 13; // 失踪详情
+
+  // 寻亲信息
+  string category = 14; // 寻亲类型
+  string data_from = 15; // 信息来源
+  string follower = 16; // 跟进志愿者
+
+  repeated string images = 17; // 上传图片
+}
+
+message CreateLostResponse {
+  Lost lost = 1;
+}
+
+message UpdateLostRequest {
+  Lost lost = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateLostResponse {
+  Lost lost = 1;
+}
+
+message DeleteLostRequest {
+  int32 id = 1;
+}
+
+// Lost End

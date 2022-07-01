@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -17,8 +18,13 @@ import (
 	"github.com/go-masonry/mortar/interfaces/cfg"
 	"github.com/go-masonry/mortar/interfaces/log"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/google/uuid"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
+)
+
+const (
+	LOST_WXMP_CODE_FILENAME = `wxmp_code.jpg`
 )
 
 // Controller responsible for the business logic of our BchmService
@@ -32,6 +38,7 @@ type controllerDeps struct {
 	Config       cfg.Config
 	Logger       log.Logger
 	Cache        *cachekit.Cache
+	FileRepo     data.FileRepo
 	LostRepo     data.LostRepo
 	LostStatRepo data.LostStatRepo
 }
@@ -51,7 +58,7 @@ func CreateController(deps controllerDeps) Controller {
 		deps: deps,
 		log:  deps.Logger.WithField("controller", "bchm"),
 		cache: deps.Cache.Redis(
-			deps.Config.Get(fmt.Sprintf("service.%s.redis.db")).Int(),
+			deps.Config.Get(fmt.Sprintf("service.%s.redis.db", "bchm")).Int(),
 		),
 		conver: newConvert(),
 	}
@@ -99,7 +106,7 @@ func (c *controller) ListLosts(ctx context.Context, request *bchmv1.ListLostsReq
 		Losts: func() []*bchmv1.Lost {
 			res := make([]*bchmv1.Lost, len(items))
 			for i := 0; i < len(items); i++ {
-				res[i] = c.conver.FromModelLostToProtoLost(items[i])
+				res[i] = c.conver.FromModelLostToProtoLost(items[i], nil)
 			}
 			return res
 		}(),
@@ -112,11 +119,36 @@ func (c *controller) GetLost(ctx context.Context, request *bchmv1.GetLostRequest
 	item, err := c.deps.LostRepo.Get(ctx, uint(request.GetId()))
 	if err != nil {
 		c.log.WithError(err).Debug(ctx, "get lost error")
-		return nil, errors.New("name not exist")
+		return nil, errors.New("lost not exist")
+	}
+	files, err := c.deps.FileRepo.GetLostByID(ctx, item.ID)
+	if err != nil {
+		c.log.WithError(err).Debug(ctx, "get lost file error")
+		return nil, errors.New("lost file not exist")
 	}
 
 	return &bchmv1.GetLostResponse{
-		Lost: c.conver.FromModelLostToProtoLost(item),
+		Lost: c.conver.FromModelLostToProtoLost(item, files),
+		WxMore: &bchmv1.LostWxMore{
+			ShareAppMessage: &bchmv1.LostWxMore_ShareAppMessage{
+				ShareKey: uuid.New().String(),
+				Title:    item.Title,
+				ImageUrl: item.AvatarURL,
+			},
+			ShareTimeline: &bchmv1.LostWxMore_ShareTimeline{
+				ShareKey: uuid.New().String(),
+				Title:    item.Title,
+				Query: func() string {
+					query := url.Values{}
+					query.Add("lost_id", strconv.Itoa(int(item.ID)))
+					return query.Encode()
+				}(),
+				ImageUrl: item.AvatarURL,
+			},
+			CodeUnlimit: &bchmv1.LostWxMore_CodeUnlimit{
+				Url: fmt.Sprintf(`/v1/lost/%d/%s`, item.ID, LOST_WXMP_CODE_FILENAME),
+			},
+		},
 	}, err
 }
 
@@ -158,7 +190,7 @@ func (c *controller) ShareLostCallback(ctx context.Context, request *bchmv1.Shar
 	}
 
 	return &bchmv1.ShareLostCallbackResponse{
-		Lost: c.conver.FromModelLostToProtoLost(item),
+		Lost: c.conver.FromModelLostToProtoLost(item, nil),
 	}, nil
 }
 
@@ -189,8 +221,21 @@ func (c *controller) CreateLost(ctx context.Context, request *bchmv1.CreateLostR
 		return nil, errors.New("create lost item failed")
 	}
 
+	for k, v := range request.GetImages() {
+		err = c.deps.FileRepo.Create(ctx, &data.FileEntity{
+			Type:     "lost",
+			SortID:   k,
+			ParentID: item.ID,
+			URL:      v,
+		})
+		if err != nil {
+			c.log.WithError(err).Debug(ctx, "create lost images failed")
+			return nil, errors.New("can not create file")
+		}
+	}
+
 	return &bchmv1.CreateLostResponse{
-		Lost: c.conver.FromModelLostToProtoLost(item),
+		Lost: c.conver.FromModelLostToProtoLost(item, nil),
 	}, err
 }
 
@@ -213,7 +258,7 @@ func (c *controller) UpdateLost(ctx context.Context, request *bchmv1.UpdateLostR
 	}
 
 	return &bchmv1.UpdateLostResponse{
-		Lost: c.conver.FromModelLostToProtoLost(item),
+		Lost: c.conver.FromModelLostToProtoLost(item, nil),
 	}, err
 }
 

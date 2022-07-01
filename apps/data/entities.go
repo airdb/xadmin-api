@@ -13,12 +13,16 @@ import (
 func MigratorFxOption() fx.Option {
 	return fx.Options(
 		fx.Supply(fx.Annotated{
-			Group:  storagekit.GroupMigrators,
-			Target: storagekit.NewMigrator("bchm", &FileEntity{}, &CategoryEntity{}, &LostEntity{}, &LostStatEntity{}),
+			Group: storagekit.GroupMigrators,
+			Target: storagekit.NewMigrator("bchm",
+				&FileEntity{}, &CategoryEntity{}, &LostEntity{}, &LostStatEntity{},
+			),
 		}),
 		fx.Supply(fx.Annotated{
-			Group:  storagekit.GroupMigrators,
-			Target: storagekit.NewMigrator("teamwork", &ProjectEntity{}, &IssueEntity{}),
+			Group: storagekit.GroupMigrators,
+			Target: storagekit.NewMigrator("teamwork",
+				&ProjectEntity{}, &IssueEntity{},
+			),
 		}),
 	)
 }
@@ -135,13 +139,13 @@ type LostEntity struct {
 	BirthedCity     string    `json:"birthed_city"`
 	BirthedCountry  string    `json:"birthed_country"`
 	BirthedAddress  string    `json:"birthed_address"`
-	BirthedAt       time.Time `gorm:"type:datetime" json:"birthed_at"`
+	BirthedAt       time.Time `json:"birthed_at"`
 
 	MissedCountry  string    `json:"missed_country"`
 	MissedProvince string    `json:"missed_province"`
 	MissedCity     string    `json:"missed_city"`
 	MissedAddress  string    `json:"missed_address"`
-	MissedAt       time.Time `gorm:"column:missed_at;type:datetime" json:"missed_at"`
+	MissedAt       time.Time `gorm:"column:missed_at" json:"missed_at"`
 	// Handler        string    `json:"handler"`
 	Follower   string `json:"follower"`
 	Babyid     string `json:"babyid"`
