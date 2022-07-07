@@ -164,7 +164,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Get(ctx context.Context, id TKey) (*TEntit
 	var entity TEntity
 	err := r.getDB(ctx).Model(&entity).
 		Scopes(r.buildDetailScope(true)).
-		First(&entity, "`id` = ?", id).Error
+		First(&entity, "id = ?", id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -194,7 +194,7 @@ func (r *Repo[TEntity, TKey, TQuery]) BatchCreate(ctx context.Context, entity []
 func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entity *TEntity, p querykit.Fields) error {
 	var e TEntity
 	db := r.getDB(ctx)
-	err := db.First(&e, "`id` = ?", id).Error
+	err := db.First(&e, "id = ?", id).Error
 	if err != nil {
 		return err
 	}
@@ -244,14 +244,14 @@ func (r *Repo[TEntity, TKey, TQuery]) Upsert(ctx context.Context, entity *TEntit
 func (r *Repo[TEntity, TKey, TQuery]) Delete(ctx context.Context, id TKey) error {
 	var entity TEntity
 	err := r.getDB(ctx).Model(&entity).
-		First(&entity, "`id` = ?", id).Error
+		First(&entity, "id = ?", id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.New("not found")
 		}
 		return err
 	}
-	if err := r.getDB(ctx).Delete(&entity, "`id` = ?", id).Error; err != nil {
+	if err := r.getDB(ctx).Delete(&entity, "id = ?", id).Error; err != nil {
 		return err
 	}
 	return nil

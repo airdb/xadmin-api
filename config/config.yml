@@ -101,6 +101,14 @@ xadmin:
   domain: "https://example.com"
   logger:
     console: true
+  cache:
+    # 缓存名称
+    redis:
+      # 缓存类型
+      type: redis
+      host: 127.0.0.1
+      port: 6379
+      password:
   casdoor:
     endpoint: "https://example.com"
     clientId: "id"
@@ -108,12 +116,27 @@ xadmin:
     jwtPublicKey: "key"
     organizationName: "organization"
     applicationName: "application"
+  wechat:
+    # 微信小程序
+    app_id: wechat_app_id
+    app_secret: wechat_app_secret
+    # 微信小程序 缓存数据库
+    redis_cache_db: 13
 
 services:
   # 模块名称: bchm, passport
   bchm:
+    redis:
+      # redis 缓存 db 号
+      db: 2
     database:
       # 数据库类型: sqlite, mysql
       type: mysql
       # 数据源名称
       dsn: user:password@tcp(localhost:3306)/dbname??charset=utf8mb4&parseTime=True&loc=Local"
+  teamwork:
+    database:
+      # 数据库类型: sqlite, mysql
+      type: sqlite
+      # 数据源名称
+      dsn: file:teamwork.db?mode=memory&cache=shared

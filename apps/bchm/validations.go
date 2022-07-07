@@ -8,7 +8,7 @@ import (
 	"github.com/airdb/xadmin-api/pkg/authkit"
 )
 
-type BchmServiceValidations interface {
+type ServiceValidations interface {
 	ListLosts(ctx context.Context, request *bchmv1.ListLostsRequest) error
 	GetLost(ctx context.Context, request *bchmv1.GetLostRequest) error
 	CreateLost(ctx context.Context, request *bchmv1.CreateLostRequest) error
@@ -16,14 +16,14 @@ type BchmServiceValidations interface {
 	DeleteLost(ctx context.Context, request *bchmv1.DeleteLostRequest) error
 }
 
-type bchmServiceValidations struct {
+type serviceValidations struct {
 }
 
-func CreateBchmServiceValidations() BchmServiceValidations {
-	return new(bchmServiceValidations)
+func CreateServiceValidations() ServiceValidations {
+	return new(serviceValidations)
 }
 
-func (w *bchmServiceValidations) ListLosts(ctx context.Context, request *bchmv1.ListLostsRequest) error {
+func (w *serviceValidations) ListLosts(ctx context.Context, request *bchmv1.ListLostsRequest) error {
 	if request.GetPageSize() == 0 {
 		request.PageSize = 10
 	}
@@ -34,15 +34,16 @@ func (w *bchmServiceValidations) ListLosts(ctx context.Context, request *bchmv1.
 	return nil
 }
 
-func (w *bchmServiceValidations) GetLost(ctx context.Context, request *bchmv1.GetLostRequest) error {
+func (w *serviceValidations) GetLost(ctx context.Context, request *bchmv1.GetLostRequest) error {
 	return nil
 }
 
-func (w *bchmServiceValidations) CreateLost(ctx context.Context, request *bchmv1.CreateLostRequest) error {
+func (w *serviceValidations) CreateLost(ctx context.Context, request *bchmv1.CreateLostRequest) error {
 	user := authkit.FromContextUser(ctx)
-	if user == nil || !user.IsAdmin {
+	if false && (user == nil || !user.IsAdmin) {
 		return fmt.Errorf("您无权限执行该操作")
 	}
+
 	if len(request.GetName()) == 0 {
 		return fmt.Errorf("请输入 姓名")
 	}
@@ -86,7 +87,7 @@ func (w *bchmServiceValidations) CreateLost(ctx context.Context, request *bchmv1
 	return nil
 }
 
-func (w *bchmServiceValidations) UpdateLost(ctx context.Context, request *bchmv1.UpdateLostRequest) error {
+func (w *serviceValidations) UpdateLost(ctx context.Context, request *bchmv1.UpdateLostRequest) error {
 	user := authkit.FromContextUser(ctx)
 	if user == nil || !user.IsAdmin {
 		return fmt.Errorf("您无权限执行该操作")
@@ -94,7 +95,7 @@ func (w *bchmServiceValidations) UpdateLost(ctx context.Context, request *bchmv1
 	return nil
 }
 
-func (w *bchmServiceValidations) DeleteLost(ctx context.Context, request *bchmv1.DeleteLostRequest) error {
+func (w *serviceValidations) DeleteLost(ctx context.Context, request *bchmv1.DeleteLostRequest) error {
 	user := authkit.FromContextUser(ctx)
 	if user == nil || !user.IsAdmin {
 		return fmt.Errorf("您无权限执行该操作")

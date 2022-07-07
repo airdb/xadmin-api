@@ -13,12 +13,16 @@ import (
 func MigratorFxOption() fx.Option {
 	return fx.Options(
 		fx.Supply(fx.Annotated{
-			Group:  storagekit.GroupMigrators,
-			Target: storagekit.NewMigrator("bchm", &LostEntity{}),
+			Group: storagekit.GroupMigrators,
+			Target: storagekit.NewMigrator("bchm",
+				&FileEntity{}, &CategoryEntity{}, &LostEntity{}, &LostStatEntity{},
+			),
 		}),
 		fx.Supply(fx.Annotated{
-			Group:  storagekit.GroupMigrators,
-			Target: storagekit.NewMigrator("teamwork", &ProjectEntity{}, &IssueEntity{}),
+			Group: storagekit.GroupMigrators,
+			Target: storagekit.NewMigrator("teamwork",
+				&ProjectEntity{}, &IssueEntity{},
+			),
 		}),
 	)
 }
@@ -93,6 +97,24 @@ type PassportEntity struct {
 	Password string
 }
 
+// CategoryEntity is our internal representation of the car
+type CategoryEntity struct {
+	ID        uint           `gorm:"primaryKey;autoIncrement" json:"id"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
+
+	UUID string `json:"uuid"`
+	// 标题
+	Title string `gorm:"column:name" json:"name"`
+	// 描述
+	Description string `json:"description"`
+}
+
+func (e *CategoryEntity) TableName() string {
+	return "tab_category"
+}
+
 // LostEntity is our internal representation of the car
 type LostEntity struct {
 	ID        uint           `gorm:"primaryKey;autoIncrement" json:"id"`
@@ -117,23 +139,47 @@ type LostEntity struct {
 	BirthedCity     string    `json:"birthed_city"`
 	BirthedCountry  string    `json:"birthed_country"`
 	BirthedAddress  string    `json:"birthed_address"`
-	BirthedAt       time.Time `gorm:"type:datetime" json:"birthed_at"`
+	BirthedAt       time.Time `json:"birthed_at"`
 
 	MissedCountry  string    `json:"missed_country"`
 	MissedProvince string    `json:"missed_province"`
 	MissedCity     string    `json:"missed_city"`
 	MissedAddress  string    `json:"missed_address"`
-	MissedAt       time.Time `gorm:"column:missed_at;type:datetime" json:"missed_at"`
+	MissedAt       time.Time `gorm:"column:missed_at" json:"missed_at"`
 	// Handler        string    `json:"handler"`
 	Follower   string `json:"follower"`
 	Babyid     string `json:"babyid"`
 	Category   string `json:"category"`
 	Height     string `json:"height"`
 	SyncStatus int    `gorm:"column:syncstatus;default:0" json:"sync_status"`
+
+	// 是否审核通过
+	Audited bool `gorm:"default:false"`
+
+	// 是否已经完结
+	Done bool `gorm:"default:false"`
 }
 
 func (e *LostEntity) TableName() string {
 	return "tab_lost"
+}
+
+// LostStatEntity is our internal representation of the car
+type LostStatEntity struct {
+	ID        uint           `gorm:"primaryKey;autoIncrement" json:"id"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
+
+	LostID uint
+	Babyid string `json:"babyid"`
+
+	ShareCount uint // 累计转发助力
+	ShowCount  uint // 累计曝光助力
+}
+
+func (e *LostStatEntity) TableName() string {
+	return "tab_lost_stat"
 }
 
 // ProjectEntity is our internal representation of the project

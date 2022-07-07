@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package bchm.v1;
+
+option go_package = "github.com/airdb/xadmin-api/genproto/bchm/v1;bchmv1";
+option java_multiple_files = true;
+option java_outer_classname = "CategoryProto";
+option java_package = "com.github.airdb.xadmin-api.bchm.v1";
+
+// Category 走失信息分类
+message Category {
+  // ID
+  //
+  // @Kit
+  //  actions: [create]
+  int32 id = 1;
+
+  // 基础信息
+
+  // 分类名称
+  //
+  // @Kit
+  //  actions: [create, update]
+  string name = 2;
+
+  // 分类描述
+  //
+  // @Kit
+  //  actions: [create, update]
+  string description = 3;
+}
+
+// Category Message Start
+
+message ListCategoriesRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+}
+
+message ListCategoriesResponse {
+  int32 total_size = 1;
+  int32 filtered_size = 2;
+
+  repeated Category categories = 3;
+}
+
+// Category Message End

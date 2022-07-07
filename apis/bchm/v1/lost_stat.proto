@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package bchm.v1;
+
+option go_package = "github.com/airdb/xadmin-api/genproto/bchm/v1;bchmv1";
+option java_multiple_files = true;
+option java_outer_classname = "LostStatProto";
+option java_package = "com.github.airdb.xadmin-api.bchm.v1";
+
+// Lost 走失数据
+message LostStat {
+  // ID
+  //
+  // @Kit
+  //  actions: [create]
+  int32 id = 1;
+
+  // 基础信息
+
+  // 走失ID
+  //
+  // @Kit
+  //  actions: [create, update]
+  int32 lost_id = 2;
+  string baby_id = 3;
+
+  int32 share_count = 4;
+  int32 show_count = 5;
+}
+
+// Lost Stat Message Start
+
+message ListLostStatsRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+  int32 lost_id = 3;
+}
+
+message ListLostStatsResponse {
+  int32 total_size = 1;
+  int32 filtered_size = 2;
+
+  repeated LostStat lost_stats = 3;
+}
+
+// Lost Stat Message End

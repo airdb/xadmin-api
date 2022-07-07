@@ -65,7 +65,10 @@ func (f *FieldMask) Keep() *fmpb.FieldMask {
 		}
 		fm.Paths = paths
 	}
-	fm.Paths = f.normalizer(lo.Intersect(f.restrict, fm.Paths)...)
+	if f.restrict != nil {
+		fm.Paths = lo.Intersect(f.restrict, fm.Paths)
+	}
+	fm.Paths = f.normalizer(fm.Paths...)
 
 	return fm
 }

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package common.v1;
+
+option go_package = "github.com/airdb/xadmin-api/genproto/common/v1;commonv1";
+option java_multiple_files = true;
+option java_outer_classname = "FileProto";
+option java_package = "com.github.airdb.xadmin-api.common.v1";
+
+// File 文件
+message File {
+  // ID
+  //
+  // @Kit
+  //  actions: [create]
+  int32 id = 1;
+
+  string open_id = 2;
+  string union_id = 3;
+  string uuid = 4;
+  string type = 5;
+  int32 sort_id = 6;
+  int32 parent_id = 7;
+  string url = 8;
+  int32 status = 9;
+}
+
+// File Message Start
+
+message ListFilesRequest {
+  int32 page_offset = 1;
+  int32 page_size = 2;
+  int32 lost_id = 3;
+}
+
+message ListFilesResponse {
+  int32 total_size = 1;
+  int32 filtered_size = 2;
+
+  repeated File files = 3;
+}
+
+// File Message End

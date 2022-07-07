@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+package bchm.v1;
+
+import "bchm/v1/category.proto";
+import "bchm/v1/lost.proto";
+import "google/api/annotations.proto";
+import "google/api/httpbody.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/bchm/v1;bchmv1";
+option java_multiple_files = true;
+option java_outer_classname = "BchmProto";
+option java_package = "com.github.airdb.xadmin-api.bchm.v1";
+
+// 宝贝回家 业务
+//
+// @Kit
+//  gencode:
+//    layers: ["*"]
+service Service {
+  // ListCategories 走失分类 列表.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: *, action: list}
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {
+    option (google.api.http) = {
+      get: "/v1/bchm/categories"
+    };
+  }
+
+  // ListLosts 走失信息 列表.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: *, action: list}
+  rpc ListLosts(ListLostsRequest) returns (ListLostsResponse) {
+    option (google.api.http) = {
+      get: "/v1/bchm/losts"
+    };
+  }
+
+  // GetLost 走失信息 详情.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: detail}
+  rpc GetLost(GetLostRequest) returns (GetLostResponse) {
+    option (google.api.http) = {
+      get: "/v1/bchm/lost/{id}"
+    };
+  }
+
+  // GetLost 走失信息 分享回调.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: detail}
+  rpc ShareLostCallback(ShareLostCallbackRequest) returns (ShareLostCallbackResponse) {
+    option (google.api.http) = {
+      get: "/v1/bchm/lost/{id}/share/{share_key}/callback"
+    };
+  }
+
+  // GetLost 走失信息 小程序码.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: detail}
+  rpc GetLostMpCode(GetLostMpCodeRequest) returns (google.api.HttpBody) {
+    option (google.api.http) = {
+      get: "/v1/bchm/lost/{id}/wxmp_code.jpg"
+    };
+  }
+
+  // CreateLost 走失信息 创建.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: *, action: create}
+  rpc CreateLost(CreateLostRequest) returns (CreateLostResponse) {
+    option (google.api.http) = {
+      post: "/v1/bchm/lost"
+      body: "*"
+    };
+  }
+
+  // UpdateLost 走失信息 更新.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: lost.id, action: update}
+  rpc UpdateLost(UpdateLostRequest) returns (UpdateLostResponse) {
+    option (google.api.http) = {
+      put: "/v1/bchm/lost/{lost.id}"
+      body: "*"
+    };
+  }
+
+  // UpdateLostAudited 走失信息 审核.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: patch}
+  rpc UpdateLostAudited(UpdateLostAuditedRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/bchm/lost/{id}:audited"
+      body: "*"
+    };
+  }
+
+  // UpdateLostDone 走失信息 完结.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: patch}
+  rpc UpdateLostDone(UpdateLostDoneRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/bchm/lost/{id}:done"
+      body: "*"
+    };
+  }
+
+  // DeleteLost 走失信息 删除.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: delete}
+  rpc DeleteLost(DeleteLostRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/bchm/lost/{id}"
+    };
+  }
+}
