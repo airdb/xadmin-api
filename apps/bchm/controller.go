@@ -22,6 +22,7 @@ import (
 	"github.com/silenceper/wechat/v2/miniprogram/config"
 	"go.uber.org/fx"
 	"google.golang.org/genproto/googleapis/api/httpbody"
+	fmpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	"gorm.io/gorm"
 )
 
@@ -274,6 +275,62 @@ func (c *controller) UpdateLost(ctx context.Context, request *bchmv1.UpdateLostR
 	return &bchmv1.UpdateLostResponse{
 		Lost: c.conver.FromModelLostToProtoLost(item, nil),
 	}, err
+}
+
+func (c *controller) UpdateLostAudited(ctx context.Context, request *bchmv1.UpdateLostAuditedRequest) (*empty.Empty, error) {
+	c.log.Debug(ctx, "update lost audited accepted")
+	data := &data.LostEntity{
+		ID:      uint(request.GetId()),
+		Audited: request.GetValue(),
+	}
+
+	fm := querykit.NewField(&fmpb.FieldMask{
+		Paths: []string{
+			"audited",
+		},
+	}, nil)
+
+	err := c.deps.LostRepo.Update(ctx, data.ID, data, fm)
+	if err != nil {
+		c.log.WithError(err).Debug(ctx, "update lost audited failed")
+		return nil, errors.New("update lost audited failed")
+	}
+
+	item, err := c.deps.LostRepo.Get(ctx, uint(data.ID))
+	if err != nil || item == nil {
+		c.log.WithError(err).Debug(ctx, "update lost item not exist")
+		return nil, errors.New("update lost item not exist")
+	}
+
+	return &empty.Empty{}, err
+}
+
+func (c *controller) UpdateLostDone(ctx context.Context, request *bchmv1.UpdateLostDoneRequest) (*empty.Empty, error) {
+	c.log.Debug(ctx, "update lost done accepted")
+	data := &data.LostEntity{
+		ID:   uint(request.GetId()),
+		Done: request.GetValue(),
+	}
+
+	fm := querykit.NewField(&fmpb.FieldMask{
+		Paths: []string{
+			"done",
+		},
+	}, nil)
+
+	err := c.deps.LostRepo.Update(ctx, data.ID, data, fm)
+	if err != nil {
+		c.log.WithError(err).Debug(ctx, "update lost done failed")
+		return nil, errors.New("update lost done failed")
+	}
+
+	item, err := c.deps.LostRepo.Get(ctx, uint(data.ID))
+	if err != nil || item == nil {
+		c.log.WithError(err).Debug(ctx, "update lost item not exist")
+		return nil, errors.New("update lost item not exist")
+	}
+
+	return &empty.Empty{}, err
 }
 
 func (c *controller) DeleteLost(ctx context.Context, request *bchmv1.DeleteLostRequest) (*empty.Empty, error) {

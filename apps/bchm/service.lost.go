@@ -56,6 +56,20 @@ func (w *serviceImpl) UpdateLost(ctx context.Context, request *bchmv1.UpdateLost
 	return
 }
 
+func (w *serviceImpl) UpdateLostAudited(ctx context.Context, request *bchmv1.UpdateLostAuditedRequest) (result *empty.Empty, err error) {
+	w.log.WithField("request", request).Debug(ctx, "update lost audited request")
+	result, err = w.deps.Controller.UpdateLostAudited(ctx, request)
+	w.log.WithError(err).Debug(ctx, "update lost audited done")
+	return
+}
+
+func (w *serviceImpl) UpdateLostDone(ctx context.Context, request *bchmv1.UpdateLostDoneRequest) (result *empty.Empty, err error) {
+	w.log.WithField("request", request).Debug(ctx, "update lost done request")
+	result, err = w.deps.Controller.UpdateLostDone(ctx, request)
+	w.log.WithError(err).Debug(ctx, "update lost done done")
+	return
+}
+
 func (w *serviceImpl) DeleteLost(ctx context.Context, request *bchmv1.DeleteLostRequest) (result *empty.Empty, err error) {
 	w.log.WithField("request", request).Debug(ctx, "delete lost request")
 	err = w.deps.Validations.DeleteLost(ctx, request)

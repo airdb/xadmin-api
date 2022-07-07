@@ -117,8 +117,10 @@ xadmin:
     organizationName: "organization"
     applicationName: "application"
   wechat:
+    # 微信小程序
     app_id: wechat_app_id
     app_secret: wechat_app_secret
+    # 微信小程序 缓存数据库
     redis_cache_db: 13
 
 services:

@@ -98,6 +98,30 @@ service Service {
     };
   }
 
+  // UpdateLostAudited 走失信息 审核.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: patch}
+  rpc UpdateLostAudited(UpdateLostAuditedRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/bchm/lost/{id}:audited"
+      body: "*"
+    };
+  }
+
+  // UpdateLostDone 走失信息 完结.
+  //
+  // @Kit
+  //  resources:
+  //    - {domain: bchm, object: lost, entity: id, action: patch}
+  rpc UpdateLostDone(UpdateLostDoneRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/bchm/lost/{id}:done"
+      body: "*"
+    };
+  }
+
   // DeleteLost 走失信息 删除.
   //
   // @Kit

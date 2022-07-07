@@ -63,6 +63,10 @@ message Lost {
   string category = 14; // 寻亲类型
   string data_from = 15; // 信息来源
   string follower = 16; // 跟进志愿者
+
+  // 元信息
+  bool audited = 17; // 是否审核通过
+  bool done = 18; // 是否已结束
 }
 
 // 微信相关信息
@@ -166,6 +170,16 @@ message UpdateLostRequest {
 
 message UpdateLostResponse {
   Lost lost = 1;
+}
+
+message UpdateLostAuditedRequest {
+  int32 id = 1;
+  bool value = 2;
+}
+
+message UpdateLostDoneRequest {
+  int32 id = 1;
+  bool value = 2;
 }
 
 message DeleteLostRequest {

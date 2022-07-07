@@ -152,6 +152,12 @@ type LostEntity struct {
 	Category   string `json:"category"`
 	Height     string `json:"height"`
 	SyncStatus int    `gorm:"column:syncstatus;default:0" json:"sync_status"`
+
+	// 是否审核通过
+	Audited bool `gorm:"default:false"`
+
+	// 是否已经完结
+	Done bool `gorm:"default:false"`
 }
 
 func (e *LostEntity) TableName() string {
