@@ -19,7 +19,9 @@ import (
 	"github.com/go-masonry/mortar/interfaces/log"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/google/uuid"
+	"github.com/silenceper/wechat/v2/miniprogram/config"
 	"go.uber.org/fx"
+	"google.golang.org/genproto/googleapis/api/httpbody"
 	"gorm.io/gorm"
 )
 
@@ -49,6 +51,7 @@ type controller struct {
 	deps   controllerDeps
 	log    log.Fields
 	cache  *cachekit.Redis
+	wxmp   *wechatkit.WechatMiniProgram
 	conver *Convert
 }
 
@@ -60,6 +63,17 @@ func CreateController(deps controllerDeps) Controller {
 		cache: deps.Cache.Redis(
 			deps.Config.Get(fmt.Sprintf("service.%s.redis.db", "bchm")).Int(),
 		),
+		wxmp: wechatkit.NewWechatMiniProgram(&config.Config{
+			AppID:     deps.Config.Get("xadmin.wechat.app_id").String(),
+			AppSecret: deps.Config.Get("xadmin.wechat.app_secret").String(),
+		}, cachekit.RedisPool(
+			fmt.Sprintf("%s:%d",
+				deps.Config.Get("xadmin.cache.redis.host").String(),
+				deps.Config.Get("xadmin.cache.redis.port").Int(),
+			),
+			deps.Config.Get("xadmin.cache.redis.password").String(),
+			deps.Config.Get("xadmin.wechat.redis_cache_db").Int(),
+		), deps.Logger),
 		conver: newConvert(),
 	}
 }
@@ -146,7 +160,7 @@ func (c *controller) GetLost(ctx context.Context, request *bchmv1.GetLostRequest
 				ImageUrl: item.AvatarURL,
 			},
 			CodeUnlimit: &bchmv1.LostWxMore_CodeUnlimit{
-				Url: fmt.Sprintf(`/v1/lost/%d/%s`, item.ID, LOST_WXMP_CODE_FILENAME),
+				Url: fmt.Sprintf(`/v1/bchm/lost/%d/%s`, item.ID, LOST_WXMP_CODE_FILENAME),
 			},
 		},
 	}, err
@@ -194,20 +208,20 @@ func (c *controller) ShareLostCallback(ctx context.Context, request *bchmv1.Shar
 	}, nil
 }
 
-func (c *controller) GetLostMpCode(ctx context.Context, request *bchmv1.GetLostMpCodeRequest) (*bchmv1.GetLostMpCodeResponse, error) {
-	wx := wechatkit.NewWechatMiniProgram(wechatkit.NewWechat())
-	code, err := wx.CodeUnlimit(
+func (c *controller) GetLostMpCode(ctx context.Context, request *bchmv1.GetLostMpCodeRequest) (*httpbody.HttpBody, error) {
+	code, err := c.wxmp.CodeUnlimit(
 		`pages/redirect/wxmpcode`,
 		fmt.Sprintf("id=%d&s=bbhj.lost", request.GetId()),
 	)
-	c.log.WithField("code", code).Info(ctx, "new mp code generated")
+	c.log.WithField("code length", len(code)).Info(ctx, "new mp code generated")
 	if err != nil {
 		c.log.WithError(err).Error(ctx, "can not generate wechat mini programe code")
 		return nil, errors.New("can not generate wechat mini programe code")
 	}
 
-	return &bchmv1.GetLostMpCodeResponse{
-		Code: code,
+	return &httpbody.HttpBody{
+		ContentType: "image/jpeg",
+		Data:        code,
 	}, nil
 }
 

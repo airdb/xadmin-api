@@ -107,6 +107,7 @@ xadmin:
       # 缓存类型
       type: redis
       host: 127.0.0.1
+      port: 6379
       password:
   casdoor:
     endpoint: "https://example.com"
@@ -115,6 +116,10 @@ xadmin:
     jwtPublicKey: "key"
     organizationName: "organization"
     applicationName: "application"
+  wechat:
+    app_id: wechat_app_id
+    app_secret: wechat_app_secret
+    redis_cache_db: 13
 
 services:
   # 模块名称: bchm, passport

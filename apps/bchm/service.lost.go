@@ -5,8 +5,7 @@ import (
 
 	bchmv1 "github.com/airdb/xadmin-api/genproto/bchm/v1"
 	"github.com/golang/protobuf/ptypes/empty"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
+	"google.golang.org/genproto/googleapis/api/httpbody"
 )
 
 func (w *serviceImpl) ListLosts(ctx context.Context, request *bchmv1.ListLostsRequest) (*bchmv1.ListLostsResponse, error) {
@@ -30,14 +29,12 @@ func (w *serviceImpl) ShareLostCallback(ctx context.Context, request *bchmv1.Sha
 	return w.deps.Controller.ShareLostCallback(ctx, request)
 }
 
-func (w *serviceImpl) GetLostMpCode(ctx context.Context, request *bchmv1.GetLostMpCodeRequest) (*bchmv1.GetLostMpCodeResponse, error) {
+func (w *serviceImpl) GetLostMpCode(ctx context.Context, request *bchmv1.GetLostMpCodeRequest) (*httpbody.HttpBody, error) {
 	response, err := w.deps.Controller.GetLostMpCode(ctx, request)
 	if err != nil {
 		return nil, err
 	}
 
-	trailer := metadata.Pairs("Content-Type", "image/jpeg")
-	grpc.SetTrailer(ctx, trailer)
 	return response, nil
 }
 

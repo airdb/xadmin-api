@@ -79,7 +79,7 @@ message LostWxMore {
     string title = 2; // 自定义标题
     string image_url = 3; // 自定义页面路径中携带的参数
     string query = 4; // 自定义图片路径
-  } 
+  }
   // 小程序二维码图片链接
   message CodeUnlimit {
     string url = 1; // 图片链接
@@ -89,7 +89,6 @@ message LostWxMore {
   ShareTimeline share_timeline = 2; // 分享到朋友圈
   CodeUnlimit code_unlimit = 3; // 小程序二维码
 }
-
 
 // Lost Start
 
@@ -127,10 +126,6 @@ message ShareLostCallbackResponse {
 
 message GetLostMpCodeRequest {
   int32 id = 1;
-}
-
-message GetLostMpCodeResponse {
-  bytes code = 1;
 }
 
 message CreateLostRequest {

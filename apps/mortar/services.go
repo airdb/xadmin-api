@@ -59,22 +59,26 @@ func grpcServiceAPIs(deps servicesDeps) serverInt.GRPCServerAPI {
 }
 
 func grpcGatewayHandlers() []serverInt.GRPCGatewayGeneratedHandlers {
+	dialOpts := []grpc.DialOption{
+		grpc.WithInsecure(),
+	}
+
 	return []serverInt.GRPCGatewayGeneratedHandlers{
 		// Register passport REST API
 		func(mux *runtime.ServeMux, endpoint string) error {
-			return passportv1.RegisterPassportServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
+			return passportv1.RegisterPassportServiceHandlerFromEndpoint(context.Background(), mux, endpoint, dialOpts)
 		},
 		// Register Bchm REST API
 		func(mux *runtime.ServeMux, endpoint string) error {
-			return bchmv1.RegisterServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
+			return bchmv1.RegisterServiceHandlerFromEndpoint(context.Background(), mux, endpoint, dialOpts)
 		},
 		// Register Teamwork REST API
 		func(mux *runtime.ServeMux, endpoint string) error {
-			return teamworkv1.RegisterTeamworkServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
+			return teamworkv1.RegisterTeamworkServiceHandlerFromEndpoint(context.Background(), mux, endpoint, dialOpts)
 		},
 		// Register Uam REST API
 		func(mux *runtime.ServeMux, endpoint string) error {
-			return uamv1.RegisterServiceHandlerFromEndpoint(context.Background(), mux, endpoint, []grpc.DialOption{grpc.WithInsecure()})
+			return uamv1.RegisterServiceHandlerFromEndpoint(context.Background(), mux, endpoint, dialOpts)
 		},
 		// Any additional gRPC gateway registrations should be called here
 	}

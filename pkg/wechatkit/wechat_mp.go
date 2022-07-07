@@ -4,11 +4,10 @@ import (
 	stdCtx "context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 
+	"github.com/go-masonry/mortar/interfaces/log"
 	"github.com/gomodule/redigo/redis"
-	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/miniprogram"
 	"github.com/silenceper/wechat/v2/miniprogram/config"
 	"github.com/silenceper/wechat/v2/miniprogram/qrcode"
@@ -16,14 +15,15 @@ import (
 
 type WechatMiniProgram struct {
 	*miniprogram.MiniProgram
+	redisPool *redis.Pool
+	log       log.Fields
 }
 
-func NewWechatMiniProgram(wx *wechat.Wechat) *WechatMiniProgram {
+func NewWechatMiniProgram(config *config.Config, pool *redis.Pool, logger log.Logger) *WechatMiniProgram {
 	return &WechatMiniProgram{
-		MiniProgram: wx.GetMiniProgram(&config.Config{
-			AppID:     os.Getenv(`WXMP_APPID`),
-			AppSecret: os.Getenv(`WXMP_APPSECRET`),
-		}),
+		MiniProgram: NewWechat(pool).GetMiniProgram(config),
+		redisPool:   pool,
+		log:         logger.WithField("kit", "wechat"),
 	}
 }
 
@@ -40,7 +40,7 @@ func (wx *WechatMiniProgram) Code2SessionContext(ctx stdCtx.Context, code string
 		return "", err
 	}
 
-	rpConn := GetCacheRedisPool().Get()
+	rpConn := wx.redisPool.Get()
 
 	// 缓存30天
 	if data, err := json.Marshal(cacheContent); err == nil {
@@ -59,11 +59,11 @@ func (wx *WechatMiniProgram) CodeUnlimit(page, scene string) (response []byte, e
 	cacheContent := struct {
 		Data []byte `json:"data,omitempty"`
 	}{}
-	rpConn := GetCacheRedisPool().Get()
+	rpConn := wx.redisPool.Get()
 	if data, err := redis.Bytes(rpConn.Do("GET", cacheKey)); err == nil {
 		err = json.Unmarshal(data, &cacheContent)
 		if err == nil && len(cacheContent.Data) > 0 {
-			log.Println("wxmp CodeUnlimit use cache")
+			wx.log.Debug(nil, "wxmp CodeUnlimit use cache")
 			return cacheContent.Data, nil
 		}
 	}
@@ -92,7 +92,7 @@ func (wx *WechatMiniProgram) CodeUnlimit(page, scene string) (response []byte, e
 	cacheContent.Data, err = qc.GetWXACodeUnlimit(codeParams)
 
 	if err != nil {
-		log.Println("query CodeUnlimit", codeParams, err)
+		wx.log.Debug(nil, "query CodeUnlimit", codeParams, err)
 		return []byte{}, err
 	}
 

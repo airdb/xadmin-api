@@ -14,11 +14,11 @@ message File {
   // @Kit
   //  actions: [create]
   int32 id = 1;
-  
+
   string open_id = 2;
   string union_id = 3;
   string uuid = 4;
-  string type  = 5;
+  string type = 5;
   int32 sort_id = 6;
   int32 parent_id = 7;
   string url = 8;
