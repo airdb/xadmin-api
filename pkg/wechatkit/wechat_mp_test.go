@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/go-masonry/bzerolog"
 	"github.com/gomodule/redigo/redis"
 	"github.com/rafaeljusto/redigomock/v3"
 	"github.com/silenceper/wechat/v2/miniprogram/config"
@@ -34,7 +35,7 @@ func TestWechatMiniProgram_CodeUnlimit(t *testing.T) {
 		wantResponse bool
 		wantErr      bool
 	}{
-		{``, NewWechatMiniProgram(config, pool), args{`pages/redirect/wxmpcode`, `id=1143039`}, true, false},
+		{``, NewWechatMiniProgram(config, pool, bzerolog.Builder().Build()), args{`pages/redirect/wxmpcode`, `id=1143039`}, true, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
