@@ -132,10 +132,11 @@ func (c *controller) GetLost(ctx context.Context, request *bchmv1.GetLostRequest
 	c.log.Debug(ctx, "get lost accepted")
 
 	item, err := c.deps.LostRepo.Get(ctx, uint(request.GetId()))
-	if err != nil {
+	if err != nil || item == nil {
 		c.log.WithError(err).Debug(ctx, "get lost error")
 		return nil, errors.New("lost not exist")
 	}
+
 	files, err := c.deps.FileRepo.GetLostByID(ctx, item.ID)
 	if err != nil {
 		c.log.WithError(err).Debug(ctx, "get lost file error")
