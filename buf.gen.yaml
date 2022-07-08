@@ -47,5 +47,5 @@ plugins:
     opt:
       - allow_repeated_fields_in_body=true
       - output_format=yaml
-      - allow_merge=true,merge_file_name=apis
+      - allow_merge=true,merge_file_name=apis,include_package_in_tags=true
       - Meinride/iam/v1/annotations.proto=go.einride.tech/iam/proto/gen/einride/iam/v1
