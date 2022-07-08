@@ -118,5 +118,8 @@ func (c Convert) FromModelLostToProtoLost(in *data.LostEntity, files []*data.Fil
 		Category: in.Category,
 		DataFrom: in.DataFrom,
 		Follower: in.Follower,
+
+		Audited: in.Audited,
+		Done:    in.Done,
 	}
 }
