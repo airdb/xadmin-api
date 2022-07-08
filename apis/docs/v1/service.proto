@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package docs.v1;
+
+import "google/api/annotations.proto";
+import "google/api/httpbody.proto";
+
+option go_package = "github.com/airdb/xadmin-api/genproto/docs/v1;docsv1";
+option java_multiple_files = true;
+option java_outer_classname = "DocsProto";
+option java_package = "com.github.airdb.xadmin-api.docs.v1";
+
+// 内置文档
+service Service {
+  // GetSwagger 接口文档.
+  rpc GetSwagger(GetSwaggerRequest) returns (google.api.HttpBody) {
+    option (google.api.http) = {
+      get: "/v1/docs/swagger.yaml"
+    };
+  }
+}
+
+message GetSwaggerRequest {}

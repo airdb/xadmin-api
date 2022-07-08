@@ -5,10 +5,12 @@ import (
 
 	"github.com/airdb/xadmin-api/apps/bchm"
 	"github.com/airdb/xadmin-api/apps/data"
+	"github.com/airdb/xadmin-api/apps/docs"
 	"github.com/airdb/xadmin-api/apps/passport"
 	"github.com/airdb/xadmin-api/apps/teamwork"
 	"github.com/airdb/xadmin-api/apps/uam"
 	bchmv1 "github.com/airdb/xadmin-api/genproto/bchm/v1"
+	docsv1 "github.com/airdb/xadmin-api/genproto/docs/v1"
 	passportv1 "github.com/airdb/xadmin-api/genproto/passport/v1"
 	teamworkv1 "github.com/airdb/xadmin-api/genproto/teamwork/v1"
 	uamv1 "github.com/airdb/xadmin-api/genproto/uam/v1"
@@ -23,6 +25,7 @@ type servicesDeps struct {
 	fx.In
 
 	// API Implementations
+	Docs     docsv1.ServiceServer
 	Passport passportv1.PassportServiceServer
 	Bchm     bchmv1.ServiceServer
 	Teamwork teamworkv1.TeamworkServiceServer
@@ -50,6 +53,7 @@ func ServicesAPIsAndOtherDependenciesFxOption() fx.Option {
 
 func grpcServiceAPIs(deps servicesDeps) serverInt.GRPCServerAPI {
 	return func(srv *grpc.Server) {
+		docsv1.RegisterServiceServer(srv, deps.Docs)
 		passportv1.RegisterPassportServiceServer(srv, deps.Passport)
 		bchmv1.RegisterServiceServer(srv, deps.Bchm)
 		teamworkv1.RegisterTeamworkServiceServer(srv, deps.Teamwork)
@@ -64,6 +68,10 @@ func grpcGatewayHandlers() []serverInt.GRPCGatewayGeneratedHandlers {
 	}
 
 	return []serverInt.GRPCGatewayGeneratedHandlers{
+		// Register docs REST API
+		func(mux *runtime.ServeMux, endpoint string) error {
+			return docsv1.RegisterServiceHandlerFromEndpoint(context.Background(), mux, endpoint, dialOpts)
+		},
 		// Register passport REST API
 		func(mux *runtime.ServeMux, endpoint string) error {
 			return passportv1.RegisterPassportServiceHandlerFromEndpoint(context.Background(), mux, endpoint, dialOpts)
@@ -86,6 +94,9 @@ func grpcGatewayHandlers() []serverInt.GRPCGatewayGeneratedHandlers {
 
 func servicesDependencies() fx.Option {
 	return fx.Provide(
+		// Docs
+		docs.CreatePassportServiceService,
+		docs.CreateController,
 		// Passport dependents
 		passport.CreatePassportServiceService,
 		passport.CreatePassportServiceController,
